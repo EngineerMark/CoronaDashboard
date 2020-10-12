@@ -5,7 +5,13 @@
                         <div class="card-body">
                             <h4 class="card-title">About</h4>
                             <div class="card-text">
-                                
+                                This website mirrors alot from the official <a target="_blank" href="https://coronadashboard.rijksoverheid.nl/">RIVM Dashboard <i class="fas fa-external-link-square-alt"></i></a>, 
+                                but might contain few invisible data information. 
+                                The goal of this website is primarly to seperate it to a standalone location. 
+                                This is also a personal project of mine to develop in these homestaying times.
+                                <br />
+                                <br />
+                                Please stay at home and wear a mask when near other people.
                             </div>
                         </div>
                     </div>
