@@ -23,6 +23,18 @@ function AdditionNumberString($val, $positiveIsBad = true, $formatNumber = false
     return $front.$val.$back;
 }
 
+// a = cases, b = pop, c = per 100k
+// ^ just an example
+function PerValue($a, $b, $c){
+    return $a/$b*$c;
+}
+
+function GetHospitalData(){
+    $data = ApiCallArray("https://coronadashboard.rijksoverheid.nl/json/NL.json");
+
+    return $data;
+}
+
 function GetReproductionValues(){
     $data = ApiCallArray("https://data.rivm.nl/covid-19/COVID-19_reproductiegetal.json");
     $data = array_reverse($data);

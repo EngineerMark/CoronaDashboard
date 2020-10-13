@@ -81,10 +81,7 @@
             <div class="card-footer text-muted text-center">
                 Last update: <?php echo time_elapsed_string("@".strtotime($regDate." 10:00:00")); ?>
             </div>
-        </div><br />
-        <div class="card">
             <div class="card-body">
-                <h4 class="card-title font-weight-bold">Map Data</h4>
             </div>
         </div>
     </div>

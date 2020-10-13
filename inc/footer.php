@@ -25,7 +25,8 @@
                             <h4 class="card-title">Credits and Sources</h4>
                             <div class="card-text">
                                 <ul>
-                                    <li>Coronavirus Datasets: <a target="_blank" href="https://rivm.nl/">RIVM</a></li>
+                                    <li>Coronavirus Datasets: <a target="_blank" href="https://rivm.nl/">RIVM</a>, <a target="_blank" href="https://rijksoverheid.nl/">Rijksoverheid</a></li>
+                                    <li><a target="_blank" href="https://ec.europa.eu/">European Commission</a></li>
                                     <li><a target="_blank" href="https://mdbootstrap.com/">Material Design Bootstrap</a></li>
                                     <li><a target="_blank" href="https://fontawesome.com/">Font Awesome</a></li>
                                     <li><a target="_blank" href="https://www.chartjs.org/">ChartJS</a>, <a target="_blank" href="https://www.amcharts.com/">amCharts</a></li>
@@ -58,7 +59,7 @@
                 document.getElementById("reproGraph"),{
                     "type":"line",
                     "data":{
-                        "labels":[<?php foreach($reproDataReverse as $reproVal){ echo "\"".$reproVal["Date"]."\",";} ?>],
+                        "labels":[<?php foreach($reproDataReverse as $reproVal){ echo "\"".date("F j, Y",strtotime($reproVal["Date"]))."\",";} ?>],
                         "datasets":[
                             {
                                 "label":"R low",
@@ -91,7 +92,15 @@
                     },
                     "options":{
                         "tooltips": {
-                            "intersect": false
+                            "intersect": false,
+                            "custom": function(tooltip) {
+                                if (!tooltip) return;
+                                // disable displaying the color box;
+                                tooltip.displayColors = false;
+                            }
+                        },
+                        "legend": {
+                            "display": false
                         },
                         "scales": {
                             "xAxes": [{
@@ -113,7 +122,7 @@
                 document.getElementById("caseChart"),{
                     "type":"LineWithLine",
                     "data":{
-                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".$_dates->Date."\",";} ?>],
+                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} ?>],
                         "datasets":[{
                             pointHitRadius: 20,
                             "fill": false,
@@ -128,7 +137,12 @@
                             "display": false
                         },
                         "tooltips": {
-                            "intersect": false
+                            "intersect": false,
+                            "custom": function(tooltip) {
+                                if (!tooltip) return;
+                                // disable displaying the color box;
+                                tooltip.displayColors = false;
+                            }
                         },
                         "elements": {
                             "line": {
@@ -185,7 +199,7 @@
                 document.getElementById("deathChart"),{
                     "type":"LineWithLine",
                     "data":{
-                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".$_dates->Date."\",";} ?>],
+                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} ?>],
                         "datasets":[{
                             pointHitRadius: 20,
                             "fill": false,
@@ -200,7 +214,12 @@
                             "display": false
                         },
                         "tooltips": {
-                            "intersect": false
+                            "intersect": false,
+                            "custom": function(tooltip) {
+                                if (!tooltip) return;
+                                // disable displaying the color box;
+                                tooltip.displayColors = false;
+                            }
                         },
                         "elements": {
                             "line": {
@@ -249,12 +268,12 @@
                 }
             );
 
-            // Total cases chart
+            // Header Total cases chart
             new Chart(
-                document.getElementById("totalCasesChart"),{
+                document.getElementById("headerTotalCasesChart"),{
                     "type":"LineWithLine",
                     "data":{
-                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".$_dates->Date."\",";} ?>],
+                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} ?>],
                         "datasets":[{
                             pointHitRadius: 20,
                             "fill": false,
@@ -269,7 +288,12 @@
                             "display": false
                         },
                         "tooltips": {
-                            "intersect": false
+                            "intersect": false,
+                            "custom": function(tooltip) {
+                                if (!tooltip) return;
+                                // disable displaying the color box;
+                                tooltip.displayColors = false;
+                            }
                         },
                         "elements": {
                             "line": {
@@ -321,12 +345,12 @@
                 }
             );
 
-            // Total deaths chart
+            // Header Total deaths chart
             new Chart(
-                document.getElementById("totalDeathsChart"),{
+                document.getElementById("headerTotalDeathsChart"),{
                     "type":"LineWithLine",
                     "data":{
-                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".$_dates->Date."\",";} ?>],
+                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} ?>],
                         "datasets":[{
                             pointHitRadius: 20,
                             "fill": false,
@@ -341,7 +365,97 @@
                             "display": false
                         },
                         "tooltips": {
-                            "intersect": false
+                            "intersect": false,
+                            "custom": function(tooltip) {
+                                if (!tooltip) return;
+                                // disable displaying the color box;
+                                tooltip.displayColors = false;
+                            }
+                        },
+                        "elements": {
+                            "line": {
+                                "tension": 0.0
+                            },
+                            "point":{
+                                "radius": 0
+                            }
+                        },
+                        "scales": {
+                            "xAxes": [{
+                                "gridLines": {
+                                    "display": false,
+                                },
+                                "ticks": {
+                                    "autoskip": true,
+                                    "autoSkipPadding": 30,
+                                }
+                            }],
+                            "yAxes": [{
+                                "id": 'left-y-axis',
+                                "gridLines": {
+                                    "drawBorder": false
+                                },
+                                type: 'linear',
+                                "ticks": {
+                                    "maxTicksLimit": 5,
+                                    "padding": 15,
+                                    "callback": function(value) {
+                                        var ranges = [
+                                            { divider: 1e6, suffix: 'M' },
+                                            { divider: 1e3, suffix: 'k' }
+                                        ];
+                                        function formatNumber(n) {
+                                            for (var i = 0; i < ranges.length; i++) {
+                                            if (n >= ranges[i].divider) {
+                                                return (n / ranges[i].divider).toString() + ranges[i].suffix;
+                                            }
+                                            }
+                                            return n;
+                                        }
+                                        return formatNumber(value);
+                                    }
+                                },
+                                "position": 'left'
+                            }]
+                        }
+                    },
+                }
+            );
+
+            // Header Hospital chart
+            new Chart(
+                document.getElementById("headerHospitalChart"),{
+                    "type":"LineWithLine",
+                    "data":{
+                        "labels": [<?php foreach($icBedsUsage as $isValue){ echo "\"".date("F j, Y",intval($isValue["date_of_report_unix"]))."\",";} ?>],
+                        "datasets":[{
+                            pointHitRadius: 20,
+                            "fill": false,
+                            "borderColor": "#eb4034",
+                            "pointBackgroundColor": "#eb4034",
+                            "label":"IC beds",
+                            "data": [<?php foreach($icBedsUsage as $isValue){ echo $isValue["covid_occupied"].",";} ?>]
+                        },{
+                            pointHitRadius: 20,
+                            "fill": false,
+                            "borderColor": "#eba834",
+                            "pointBackgroundColor": "#eba834",
+                            "label":"Hospital beds",
+                            "data": [<?php foreach($hospBedsUsage as $isValue){ echo $isValue["covid_occupied"].",";} ?>]
+                        }]
+                    },
+                    "options":{
+                        "responsive": true,
+                        "legend": {
+                            "display": false
+                        },
+                        "tooltips": {
+                            "intersect": false,
+                            "custom": function(tooltip) {
+                                if (!tooltip) return;
+                                // disable displaying the color box;
+                                tooltip.displayColors = false;
+                            }
                         },
                         "elements": {
                             "line": {

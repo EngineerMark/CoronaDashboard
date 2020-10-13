@@ -1,6 +1,13 @@
 <?php
     include "inc/functions.php";
 
+    $hospitalData = GetHospitalData();
+    $icBedsUsage = $hospitalData["intensive_care_beds_occupied"]["values"];
+    $hospBedsUsage = $hospitalData["hospital_beds_occupied"]["values"];
+
+    $hospBedsUsageReverse = array_reverse($hospBedsUsage);
+    $hospBedsDifference = $hospBedsUsageReverse[0]["covid_occupied"]-$hospBedsUsageReverse[1]["covid_occupied"];
+
     $provinceData = GetProvinceData();
     $totalCases = 0;
     $totalDeaths = 0;
@@ -53,6 +60,7 @@
                 <span class="navbar-brand"><i class="fas fa-virus"></i> COVID-19 Dashboard</span>
             </nav>
             <br />
+            <div class="alert alert-danger" role="alert"><i class="fas fa-exclamation-triangle"></i> The current situation in the Netherlands is <strong>bad</strong>. Please minimize as much contact as possible.</div>
             <div class="card card-image text-center" style="background-image: url(https://ec.europa.eu/culture/sites/default/files/styles/oe_theme_medium_no_crop/public/2020-09/cover-Covid19.png?itok=PPFgniH3);">
 
                 <!-- Content -->
@@ -63,13 +71,12 @@
                         <p>Visualizing the coronavirus pandemic in the Netherlands. Currently one of the worst hit countries in europe.</p>
                         <!-- <a class="btn btn-pink"><i class="fas fa-clone left"></i> View project</a> -->
                         <div class="row text-black-50">
-                            <div class="col-lg-2"></div>
                             <div class="col-lg-4">
                                 <div class="card chart-card">
                                     <div class="card-body">
                                         <h5 class="body-title">Total Cases</h5>
                                         <h6><?php echo number_format($totalCases)." <small>".AdditionNumberString($newCases,true,true)."</small>"; ?></h6>
-                                        <canvas id="totalCasesChart"></canvas>
+                                        <canvas id="headerTotalCasesChart"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -78,11 +85,19 @@
                                     <div class="card-body">
                                         <h5 class="body-title">Total Deaths</h5>
                                         <h6><?php echo number_format($totalDeaths)." <small>".AdditionNumberString($newDeaths,true,true)."</small>"; ?></h6>
-                                        <canvas id="totalDeathsChart"></canvas>
+                                        <canvas id="headerTotalDeathsChart"></canvas>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-2"></div>
+                            <div class="col-lg-4">
+                                <div class="card chart-card">
+                                    <div class="card-body">
+                                        <h5 class="body-title">Hospitalizations</h5>
+                                        <h6><?php echo number_format($hospBedsUsageReverse[0]["covid_occupied"])." <small>".AdditionNumberString($hospBedsDifference,true,true)."</small>"; ?></h6>
+                                        <canvas id="headerHospitalChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
