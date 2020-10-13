@@ -1,5 +1,34 @@
 <?php
     include "inc/functions.php";
+
+    $provinceData = GetProvinceData();
+    $totalCases = 0;
+    $totalDeaths = 0;
+    $newCases = 0;
+    $newDeaths = 0;
+    foreach($provinceData as $province){
+        $totalCases+=$province->TotalCases;
+        $totalDeaths+=$province->TotalDeaths;
+        $dailyEvents = array_values($province->DailyEvents);
+        $newCases += $dailyEvents[0]->ReportedCases;
+        $newDeaths += $dailyEvents[0]->ReportedDeaths;
+    }
+    $dataPointsNationwide = array();
+    foreach($provinceData as $province){
+        $_provinceData = $province->DailyEvents;
+        foreach($_provinceData as $dataPoint){
+            $date = $dataPoint->Date;
+            if(!array_key_exists($date,$dataPointsNationwide)){
+                $newNationDataPoint = new DataPoint();
+                $newNationDataPoint->Date = $date;
+                $dataPointsNationwide[$date] = $newNationDataPoint;
+                // echo $this->Municipalities[$data["Municipality_name"]]->RegionName;
+            }
+            $dataPointsNationwide[$date]->AddDataPoint($dataPoint->Clone());
+        }
+    }
+    $dataPointsNationwide = array_reverse($dataPointsNationwide);
+    // print_r($dataPointsNationwide);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +47,18 @@
         <link href="css/mdb.min.css" rel="stylesheet">
 
         <script src="js/jquery.min.js"></script>
+        <script src="js/addons/datatables.min.js"></script>
+
+        <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/maps.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/geodata/netherlandsLow.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"></script>
+
+        <script src="js/scripts.js"></script>
     </head>
     <body>
         <div class="container">
@@ -26,3 +66,38 @@
                 <span class="navbar-brand"><i class="fas fa-virus"></i> COVID-19 Dashboard</span>
             </nav>
             <br />
+            <div class="card card-image text-center" style="background-image: url(https://ec.europa.eu/culture/sites/default/files/styles/oe_theme_medium_no_crop/public/2020-09/cover-Covid19.png?itok=PPFgniH3);">
+
+                <!-- Content -->
+                <div class="text-white text-center align-items-center rgba-black-strong py-5 px-4 ">
+                    <div class="text-center">
+                        <h5 class="pink-text"><i class="fas fa-virus"></i> COVID-19</h5>
+                        <h3 class="card-title pt-2"><strong>Dutch Coronavirus Dashboard</strong></h3>
+                        <p>Visualizing the coronavirus pandemic in the Netherlands. Currently one of the worst hit countries in europe.</p>
+                        <!-- <a class="btn btn-pink"><i class="fas fa-clone left"></i> View project</a> -->
+                        <div class="row text-black-50">
+                            <div class="col-lg-2"></div>
+                            <div class="col-lg-4">
+                                <div class="card chart-card">
+                                    <div class="card-body">
+                                        <h5 class="body-title">Total Cases</h5>
+                                        <h6><?php echo number_format($totalCases)." <small>".AdditionNumberString($newCases,true,true)."</small>"; ?></h6>
+                                        <canvas id="totalCasesChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card chart-card">
+                                    <div class="card-body">
+                                        <h5 class="body-title">Total Deaths</h5>
+                                        <h6><?php echo number_format($totalDeaths)." <small>".AdditionNumberString($newDeaths,true,true)."</small>"; ?></h6>
+                                        <canvas id="totalDeathsChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><br />

@@ -1,10 +1,37 @@
 <?php
 
+date_default_timezone_set("Europe/Amsterdam");
+
+//Adds an arrow up, down or a straight line if number is negative/positive,
+//used for additions/subtractions on cases etc
+function AdditionNumberString($val, $positiveIsBad = true, $formatNumber = false){
+    $front = "";
+    if($val<0){
+        $front = "<span class=\"text-success\"><i class=\"fas fa-caret-down\"></i>";
+    }elseif($val>0){
+        $front = "<span class=\"text-danger\"><i class=\"fas fa-caret-up\"></i>";
+    }else{
+        $front = "<span>";
+    }
+    $back = "</span>";
+    $val = abs($val);
+    if($formatNumber){
+        $val = number_format($val);
+    }
+
+    return $front.$val.$back;
+}
+
 function GetReproductionValues(){
     $data = ApiCallArray("https://data.rivm.nl/covid-19/COVID-19_reproductiegetal.json");
     $data = array_reverse($data);
     return $data;
     // print_r($data[14]);
+}
+
+function GetCountryInfo(){
+    $data = ApiCallArray("https://restcountries.eu/rest/v2/name/netherlands")[0];
+
 }
 
 function GetProvinceData(){
@@ -24,11 +51,41 @@ function GetProvinceData(){
         }
         $provinces[$localProvince]->Add($ProvinceDataPiece);
     }
-
     ksort($provinces);
 
     return $provinces;
     // print_r($data[14]);
+}
+
+class DataPoint{
+    public $Date = "";
+    public $ReportedCases = 0;
+    public $ReportedDeaths = 0;
+    public $ReportedHospitalAdmissions = 0;
+    
+    public function Add($data){
+        if(empty($this->Date)){
+            $this->Date = $data["Date_of_publication"];
+        }
+        $this->ReportedCases += $data["Total_reported"];
+        $this->ReportedDeaths += $data["Deceased"];
+        $this->ReportedHospitalAdmissions += $data["Hospital_admission"];
+    }
+
+    public function AddDataPoint($data){
+        $this->ReportedCases+=$data->ReportedCases;
+        $this->ReportedDeaths+=$data->ReportedDeaths;
+        $this->ReportedHospitalAdmissions+=$data->ReportedHospitalAdmissions;
+    }
+
+    public function Clone(){
+        $newObject = new DataPoint();
+        $newObject->Date = $this->Date;
+        $newObject->ReportedCases = $this->ReportedCases;
+        $newObject->ReportedDeaths = $this->ReportedDeaths;
+        $newObject->ReportedHospitalAdmissions = $this->ReportedHospitalAdmissions;
+        return $newObject;
+    }
 }
 
 class RegionData{
@@ -38,6 +95,8 @@ class RegionData{
     public $TotalDeaths = 0;
     public $TotalHospitalAdmissions = 0;
 
+    public $DailyEvents = array();
+
     public function __construct($name) {
         $this->RegionName = $name;
     }
@@ -46,6 +105,15 @@ class RegionData{
         $this->TotalCases += $data["Total_reported"];
         $this->TotalDeaths += $data["Deceased"];
         $this->TotalHospitalAdmissions += $data["Hospital_admission"];
+
+        if(!array_key_exists($data["Date_of_publication"],$this->DailyEvents)){
+            $this->DailyEvents[$data["Date_of_publication"]] = new DataPoint();
+            // echo "New data point for ".$this->RegionName.", date ".$data["Date_of_publication"]."<br />";
+        }
+        $this->DailyEvents[$data["Date_of_publication"]]->Add($data);
+        // echo "Added to data point for ".$this->RegionName.", date ".$data["Date_of_publication"]."<br />";
+
+        // $DailyEvents[0] = "Test";
     }
 }
 
@@ -55,11 +123,14 @@ class ProvinceData extends RegionData{
     public function Add($data){
         parent::Add($data);
 
-        if(!array_key_exists($data["Municipality_name"],$this->Municipalities)){
-            $newMunicipality = new MunicipalityData($data["Municipality_name"]);
-            $this->Municipalities[$data["Municipality_name"]] = $newMunicipality;
+        if($data["Municipality_name"]!=null){
+            if(!array_key_exists($data["Municipality_name"],$this->Municipalities)){
+                $newMunicipality = new MunicipalityData($data["Municipality_name"]);
+                $this->Municipalities[$data["Municipality_name"]] = $newMunicipality;
+                // echo $this->Municipalities[$data["Municipality_name"]]->RegionName;
+            }
+            $this->Municipalities[$data["Municipality_name"]]->Add($data);
         }
-        $this->Municipalities[$data["Municipality_name"]]->Add($data);
     }
 }
 
@@ -89,7 +160,9 @@ function ApiCall($url){
     if(file_exists($path)){
         $cacheReady = true;
         $age = time()-filemtime($path);
-        if($age>$ageLimit){
+        if($age>$ageLimit 
+            || (($age/60/60<intval("H")-14)&&($age<$ageLimit)&&(intval(date("H"))>=14))
+            ){
             $openApi = true;
         }            
     }

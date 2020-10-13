@@ -1,4 +1,4 @@
-<div class="row">
+            <div class="row">
                 <div class="col-lg-6">
                     <!-- About -->
                     <div class="card">
@@ -28,13 +28,349 @@
                                     <li>Coronavirus Datasets: <a target="_blank" href="https://rivm.nl/">RIVM <i class="fas fa-external-link-square-alt"></i></a></li>
                                     <li><a target="_blank" href="https://mdbootstrap.com/">Material Design Bootstrap <i class="fas fa-external-link-square-alt"></i></a></li>
                                     <li><a target="_blank" href="https://fontawesome.com/">Font Awesome <i class="fas fa-external-link-square-alt"></i></a></li>
-                                    <li><a target="_blank" href="https://www.chartjs.org/">ChartJS <i class="fas fa-external-link-square-alt"></i></a></li>
+                                    <li><a target="_blank" href="https://www.chartjs.org/">ChartJS <i class="fas fa-external-link-square-alt"></i></a>, <a target="_blank" href="https://www.amcharts.com/">amCharts <i class="fas fa-external-link-square-alt"></i></a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div><br />
         </div>
+        <script>
+            // Reproductionvalue chart
+            new Chart(
+                document.getElementById("reproGraph"),{
+                    "type":"line",
+                    "data":{
+                        "labels":[<?php foreach($reproDataReverse as $reproVal){ echo "\"".$reproVal["Date"]."\",";} ?>],
+                        "datasets":[{
+                            "label":"R low",
+                            // "data":[65,59,80,81,56,55,40],
+                            "data":[<?php foreach($reproDataReverse as $reproVal){ echo $reproVal["Rt_low"].",";} ?>],
+                            "fill":"+1",
+                            "borderColor":"rgb(75, 192, 192)",
+                            "lineTension":0.1
+                        },
+                        {
+                            "label":"R high",
+                            // "data":[65,59,80,81,56,55,40],
+                            "data":[<?php foreach($reproDataReverse as $reproVal){ echo $reproVal["Rt_up"].",";} ?>],
+                            "fill":false,
+                            "borderColor":"rgb(75, 192, 192)",
+                            "lineTension":0.1
+                        },
+                        {
+                            "label":"R avg",
+                            // "data":[65,59,80,81,56,55,40],
+                            "data":[<?php foreach($reproDataReverse as $reproVal){ echo (isset($reproVal["Rt_avg"])?$reproVal["Rt_avg"]:"").",";} ?>],
+                            "fill":false,
+                            "borderColor":"rgb(50, 168, 82)",
+                            "lineTension":0.1
+                        }]
+                    },
+                    "options":{
+                        "tooltips": {
+                            "intersect": false
+                        },
+                        "scales": {
+                            "xAxes": [{
+                                "gridLines": {
+                                    "display": false,
+                                },
+                                "ticks": {
+                                    "autoskip": true,
+                                    "autoSkipPadding": 30,
+                                }
+                            }]
+                        }
+                    }
+                }
+            );
+
+            // New cases chart
+            new Chart(
+                document.getElementById("caseChart"),{
+                    "type":"LineWithLine",
+                    "data":{
+                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".$_dates->Date."\",";} ?>],
+                        "datasets":[{
+                            pointHitRadius: 20,
+                            "fill": false,
+                            "borderColor": "#eba834",
+                            "pointBackgroundColor": "#eba834",
+                            "data": [<?php foreach($dataPointsNationwide as $_value){ echo (isset($_value->ReportedCases)?$_value->ReportedCases:"").",";} ?>]
+                        }]
+                    },
+                    "options":{
+                        "responsive": true,
+                        "legend": {
+                            "display": false
+                        },
+                        "tooltips": {
+                            "intersect": false
+                        },
+                        "elements": {
+                            "line": {
+                                "tension": 0.0
+                            },
+                            "point":{
+                                "radius": 0
+                            }
+                        },
+                        "scales": {
+                            "xAxes": [{
+                                "gridLines": {
+                                    "display": false,
+                                },
+                                "ticks": {
+                                    "autoskip": true,
+                                    "autoSkipPadding": 30,
+                                }
+                            }],
+                            "yAxes": [{
+                                "id": 'left-y-axis',
+                                "gridLines": {
+                                    "drawBorder": false
+                                },
+                                type: 'linear',
+                                "ticks": {
+                                    "maxTicksLimit": 5,
+                                    "padding": 15,
+                                    "callback": function(value) {
+                                        var ranges = [
+                                            { divider: 1e6, suffix: 'M' },
+                                            { divider: 1e3, suffix: 'k' }
+                                        ];
+                                        function formatNumber(n) {
+                                            for (var i = 0; i < ranges.length; i++) {
+                                            if (n >= ranges[i].divider) {
+                                                return (n / ranges[i].divider).toString() + ranges[i].suffix;
+                                            }
+                                            }
+                                            return n;
+                                        }
+                                        return formatNumber(value);
+                                    }
+                                },
+                                "position": 'left'
+                            }]
+                        }
+                    },
+                }
+            );
+
+            // New deaths chart
+            new Chart(
+                document.getElementById("deathChart"),{
+                    "type":"LineWithLine",
+                    "data":{
+                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".$_dates->Date."\",";} ?>],
+                        "datasets":[{
+                            pointHitRadius: 20,
+                            "fill": false,
+                            "borderColor": "#eb4034",
+                            "pointBackgroundColor": "#eb4034",
+                            "data": [<?php foreach($dataPointsNationwide as $_value){ echo (isset($_value->ReportedDeaths)?$_value->ReportedDeaths:"").",";} ?>]
+                        }]
+                    },
+                    "options":{
+                        "responsive": true,
+                        "legend": {
+                            "display": false
+                        },
+                        "tooltips": {
+                            "intersect": false
+                        },
+                        "elements": {
+                            "line": {
+                                "tension": 0.0
+                            },
+                            "point":{
+                                "radius": 0
+                            }
+                        },
+                        "scales": {
+                            "xAxes": [{
+                                "gridLines": {
+                                    "display": false,
+                                },
+                                "ticks": {
+                                    "autoskip": true,
+                                    "autoSkipPadding": 30,
+                                }
+                            }],
+                            "yAxes": [{
+                                "gridLines": {
+                                    "drawBorder": false
+                                },
+                                "ticks": {
+                                    "maxTicksLimit": 5,
+                                    "padding": 15,
+                                    "callback": function(value) {
+                                        var ranges = [
+                                            { divider: 1e6, suffix: 'M' },
+                                            { divider: 1e3, suffix: 'k' }
+                                        ];
+                                        function formatNumber(n) {
+                                            for (var i = 0; i < ranges.length; i++) {
+                                            if (n >= ranges[i].divider) {
+                                                return (n / ranges[i].divider).toString() + ranges[i].suffix;
+                                            }
+                                            }
+                                            return n;
+                                        }
+                                        return formatNumber(value);
+                                    }
+                                }
+                            }]
+                        }
+                    },
+                }
+            );
+
+            // Total cases chart
+            new Chart(
+                document.getElementById("totalCasesChart"),{
+                    "type":"LineWithLine",
+                    "data":{
+                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".$_dates->Date."\",";} ?>],
+                        "datasets":[{
+                            pointHitRadius: 20,
+                            "fill": false,
+                            "borderColor": "#eba834",
+                            "pointBackgroundColor": "#eba834",
+                            "data": [<?php $cumulativeCasesBuffer = 0; foreach($dataPointsNationwide as $_value){ $cumulativeCasesBuffer+=(isset($_value->ReportedCases)?$_value->ReportedCases:0); echo $cumulativeCasesBuffer.",";} ?>]
+                        }]
+                    },
+                    "options":{
+                        "responsive": true,
+                        "legend": {
+                            "display": false
+                        },
+                        "tooltips": {
+                            "intersect": false
+                        },
+                        "elements": {
+                            "line": {
+                                "tension": 0.0
+                            },
+                            "point":{
+                                "radius": 0
+                            }
+                        },
+                        "scales": {
+                            "xAxes": [{
+                                "gridLines": {
+                                    "display": false,
+                                },
+                                "ticks": {
+                                    "autoskip": true,
+                                    "autoSkipPadding": 30,
+                                }
+                            }],
+                            "yAxes": [{
+                                "id": 'left-y-axis',
+                                "gridLines": {
+                                    "drawBorder": false
+                                },
+                                type: 'linear',
+                                "ticks": {
+                                    "maxTicksLimit": 5,
+                                    "padding": 15,
+                                    "callback": function(value) {
+                                        var ranges = [
+                                            { divider: 1e6, suffix: 'M' },
+                                            { divider: 1e3, suffix: 'k' }
+                                        ];
+                                        function formatNumber(n) {
+                                            for (var i = 0; i < ranges.length; i++) {
+                                            if (n >= ranges[i].divider) {
+                                                return (n / ranges[i].divider).toString() + ranges[i].suffix;
+                                            }
+                                            }
+                                            return n;
+                                        }
+                                        return formatNumber(value);
+                                    }
+                                },
+                                "position": 'left'
+                            }]
+                        }
+                    },
+                }
+            );
+
+            // Total deaths chart
+            new Chart(
+                document.getElementById("totalDeathsChart"),{
+                    "type":"LineWithLine",
+                    "data":{
+                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".$_dates->Date."\",";} ?>],
+                        "datasets":[{
+                            pointHitRadius: 20,
+                            "fill": false,
+                            "borderColor": "#eb4034",
+                            "pointBackgroundColor": "#eb4034",
+                            "data": [<?php $cumulativeDeathsBuffer = 0; foreach($dataPointsNationwide as $_value){ $cumulativeDeathsBuffer+=(isset($_value->ReportedDeaths)?$_value->ReportedDeaths:0); echo $cumulativeDeathsBuffer.",";} ?>]
+                        }]
+                    },
+                    "options":{
+                        "responsive": true,
+                        "legend": {
+                            "display": false
+                        },
+                        "tooltips": {
+                            "intersect": false
+                        },
+                        "elements": {
+                            "line": {
+                                "tension": 0.0
+                            },
+                            "point":{
+                                "radius": 0
+                            }
+                        },
+                        "scales": {
+                            "xAxes": [{
+                                "gridLines": {
+                                    "display": false,
+                                },
+                                "ticks": {
+                                    "autoskip": true,
+                                    "autoSkipPadding": 30,
+                                }
+                            }],
+                            "yAxes": [{
+                                "id": 'left-y-axis',
+                                "gridLines": {
+                                    "drawBorder": false
+                                },
+                                type: 'linear',
+                                "ticks": {
+                                    "maxTicksLimit": 5,
+                                    "padding": 15,
+                                    "callback": function(value) {
+                                        var ranges = [
+                                            { divider: 1e6, suffix: 'M' },
+                                            { divider: 1e3, suffix: 'k' }
+                                        ];
+                                        function formatNumber(n) {
+                                            for (var i = 0; i < ranges.length; i++) {
+                                            if (n >= ranges[i].divider) {
+                                                return (n / ranges[i].divider).toString() + ranges[i].suffix;
+                                            }
+                                            }
+                                            return n;
+                                        }
+                                        return formatNumber(value);
+                                    }
+                                },
+                                "position": 'left'
+                            }]
+                        }
+                    },
+                }
+            );
+        </script>
     </body>
 </html>
