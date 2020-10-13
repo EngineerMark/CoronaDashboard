@@ -23,3 +23,9 @@ Chart.controllers.LineWithLine = Chart.controllers.line.extend({
    }
 });
 
+$("a[href^='https']").each(function() {
+    $(this).css({
+      background: "url(https://www.google.com/s2/favicons?domain=" + this.hostname + ") left center no-repeat",
+      "padding-left": "20px"
+    });    
+});

@@ -45,20 +45,7 @@
         <link rel="stylesheet" href="fontawesome/css/all.css">
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/mdb.min.css" rel="stylesheet">
-
-        <script src="js/jquery.min.js"></script>
-        <script src="js/addons/datatables.min.js"></script>
-
-        <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-        <script src="https://cdn.amcharts.com/lib/4/maps.js"></script>
-        <script src="https://cdn.amcharts.com/lib/4/geodata/netherlandsLow.js"></script>
-        <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
-
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"></script>
-
-        <script src="js/scripts.js"></script>
+        <link href="css/style.css" rel="stylesheet">
     </head>
     <body>
         <div class="container">

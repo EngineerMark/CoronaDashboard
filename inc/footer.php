@@ -5,7 +5,7 @@
                         <div class="card-body">
                             <h4 class="card-title"><i class="fas fa-info-circle"></i> About</h4>
                             <div class="card-text">
-                                This website mirrors alot from the official <a target="_blank" href="https://coronadashboard.rijksoverheid.nl/">RIVM Dashboard <i class="fas fa-external-link-square-alt"></i></a>, 
+                                This website mirrors alot from the official <a target="_blank" href="https://coronadashboard.rijksoverheid.nl/">RIVM Dashboard</a>, 
                                 but might contain few invisible data information. 
                                 The goal of this website is primarly to seperate it to a standalone location. 
                                 This is also a personal project of mine to develop in these homestaying times.
@@ -25,10 +25,10 @@
                             <h4 class="card-title">Credits and Sources</h4>
                             <div class="card-text">
                                 <ul>
-                                    <li>Coronavirus Datasets: <a target="_blank" href="https://rivm.nl/">RIVM <i class="fas fa-external-link-square-alt"></i></a></li>
-                                    <li><a target="_blank" href="https://mdbootstrap.com/">Material Design Bootstrap <i class="fas fa-external-link-square-alt"></i></a></li>
-                                    <li><a target="_blank" href="https://fontawesome.com/">Font Awesome <i class="fas fa-external-link-square-alt"></i></a></li>
-                                    <li><a target="_blank" href="https://www.chartjs.org/">ChartJS <i class="fas fa-external-link-square-alt"></i></a>, <a target="_blank" href="https://www.amcharts.com/">amCharts <i class="fas fa-external-link-square-alt"></i></a></li>
+                                    <li>Coronavirus Datasets: <a target="_blank" href="https://rivm.nl/">RIVM</a></li>
+                                    <li><a target="_blank" href="https://mdbootstrap.com/">Material Design Bootstrap</a></li>
+                                    <li><a target="_blank" href="https://fontawesome.com/">Font Awesome</a></li>
+                                    <li><a target="_blank" href="https://www.chartjs.org/">ChartJS</a>, <a target="_blank" href="https://www.amcharts.com/">amCharts</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -36,6 +36,22 @@
                 </div>
             </div><br />
         </div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/popper.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/addons/datatables.min.js"></script>
+
+        <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/maps.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/geodata/netherlandsLow.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"></script>
+
+        <script src="js/scripts.js"></script>
+        <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
         <script>
             // Reproductionvalue chart
             new Chart(
@@ -43,30 +59,35 @@
                     "type":"line",
                     "data":{
                         "labels":[<?php foreach($reproDataReverse as $reproVal){ echo "\"".$reproVal["Date"]."\",";} ?>],
-                        "datasets":[{
-                            "label":"R low",
-                            // "data":[65,59,80,81,56,55,40],
-                            "data":[<?php foreach($reproDataReverse as $reproVal){ echo $reproVal["Rt_low"].",";} ?>],
-                            "fill":"+1",
-                            "borderColor":"rgb(75, 192, 192)",
-                            "lineTension":0.1
-                        },
-                        {
-                            "label":"R high",
-                            // "data":[65,59,80,81,56,55,40],
-                            "data":[<?php foreach($reproDataReverse as $reproVal){ echo $reproVal["Rt_up"].",";} ?>],
-                            "fill":false,
-                            "borderColor":"rgb(75, 192, 192)",
-                            "lineTension":0.1
-                        },
-                        {
-                            "label":"R avg",
-                            // "data":[65,59,80,81,56,55,40],
-                            "data":[<?php foreach($reproDataReverse as $reproVal){ echo (isset($reproVal["Rt_avg"])?$reproVal["Rt_avg"]:"").",";} ?>],
-                            "fill":false,
-                            "borderColor":"rgb(50, 168, 82)",
-                            "lineTension":0.1
-                        }]
+                        "datasets":[
+                            {
+                                "label":"R low",
+                                // "data":[65,59,80,81,56,55,40],
+                                "data":[<?php foreach($reproDataReverse as $reproVal){ echo $reproVal["Rt_low"].",";} ?>],
+                                "fill":"+1",
+                                "borderColor":"rgba(75, 192, 192, 0)",
+                                "lineTension":0.1,
+                                "pointRadius": 0,
+                            },
+                            {
+                                "label":"R high",
+                                // "data":[65,59,80,81,56,55,40],
+                                "data":[<?php foreach($reproDataReverse as $reproVal){ echo $reproVal["Rt_up"].",";} ?>],
+                                "fill":false,
+                                "borderColor":"rgba(75, 192, 192, 0)",
+                                "lineTension":0.1,
+                                "pointRadius": 0,
+                            },
+                            {
+                                "label":"R avg",
+                                // "data":[65,59,80,81,56,55,40],
+                                "data":[<?php foreach($reproDataReverse as $reproVal){ echo (isset($reproVal["Rt_avg"])?$reproVal["Rt_avg"]:"").",";} ?>],
+                                "fill":false,
+                                "borderColor":"rgb(50, 168, 82)",
+                                "lineTension":0.1,
+                                "pointRadius": 0,
+                            }
+                        ]
                     },
                     "options":{
                         "tooltips": {

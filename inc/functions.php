@@ -1,6 +1,7 @@
 <?php
 
 date_default_timezone_set("Europe/Amsterdam");
+$dutchPopulation = 17019800;
 
 //Adds an arrow up, down or a straight line if number is negative/positive,
 //used for additions/subtractions on cases etc
@@ -27,11 +28,6 @@ function GetReproductionValues(){
     $data = array_reverse($data);
     return $data;
     // print_r($data[14]);
-}
-
-function GetCountryInfo(){
-    $data = ApiCallArray("https://restcountries.eu/rest/v2/name/netherlands")[0];
-
 }
 
 function GetProvinceData(){
