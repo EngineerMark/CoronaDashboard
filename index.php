@@ -21,7 +21,7 @@
                 ?></div>
             </div>
             <div class="card-footer text-muted text-center">
-                Last update: <?php echo time_elapsed_string("@".strtotime($reproData[0]["Date"])); ?>
+                <i class="far fa-clock"></i> Last update: <?php echo time_elapsed_string("@".strtotime($reproData[0]["Date"])); ?>
             </div>
         </div><br />
         <div class="card chart-card">
@@ -61,6 +61,8 @@
                         <li class="list-group-item d-flex justify-content-between align-items-center">Wear a mask in public spaces <i class="fas fa-head-side-mask"></i></li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">Work as much as possible from home <i class="fas fa-laptop-house"></i></li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">Wash your hands often <i class="fas fa-hands-wash"></i></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">Pay contactless <i class="fas fa-credit-card"></i></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">Stay at home and get tested if you have any sign of the virus <i class="fas fa-head-side-cough"></i></li>
                     </lul>
                 </div>
             </div>
@@ -100,7 +102,7 @@
                 <small>Click on a province to view more detailed information.</small>
             </div>
             <div class="card-footer text-muted text-center">
-                Last update: <?php echo time_elapsed_string("@".strtotime($regDate." 10:00:00")); ?>
+                <i class="far fa-clock"></i> Last update: <?php echo time_elapsed_string("@".strtotime($regDate." 10:00:00")); ?>
             </div>
             <div class="card-body">
                 <div class="netherlandsheatmap" id="netherlandsheatmap"></div>
@@ -114,6 +116,8 @@
     foreach($provinceData as $province){
         $Municipalities = $province->Municipalities;
         ksort($Municipalities);
+        $reversedDaily = $province->DailyEvents;
+        $reversedDaily = array_reverse($reversedDaily);
         echo "<div class=\"modal fade\" id=\"provinceData_".$provinceID."\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"provinceData_".$provinceID."_Label\" aria-hidden=\"true\">
                 <div class=\"modal-dialog modal-lg\" role=\"document\">
                     <div class=\"modal-content\">
@@ -134,10 +138,20 @@
                                     <p>".number_format(PerValue($province->TotalDeaths,$provinceTable[$province->RegionName][1],1000))."/1,000 deaths</p>
                                 </div>
                             </div>
+                            <div class=\"row\">
+                                <div class=\"col-lg-6\">
+                                    <small>Total cases</small>
+                                    <canvas id=\"totalCasesProvince_".$provinceID."\"></canvas>
+                                </div>
+                                <div class=\"col-lg-6\">
+                                    <small>Total deaths</small>
+                                    <canvas id=\"totalDeathsProvince_".$provinceID."\"></canvas>
+                                </div>
+                            </div>
                             <table id=\"province_".$provinceID."_municipalityNumbers\" class=\"table table-hover table-sm sortable\">
                                 <thead class=\"bg-light\">
                                     <tr>
-                                        <th scope=\"col\">Province</th>
+                                        <th scope=\"col\">Municipality (".count($Municipalities).")</th>
                                         <th scope=\"col\">Cases</th>
                                         <th scope=\"col\">Deaths</th>
                                         <th scope=\"col\">Hosp. Admissions</th>
@@ -159,7 +173,158 @@
                         </div>
                     </div>
                 </div>
-            </div>";
+            </div><script>
+                new Chart(
+                    document.getElementById(\"totalCasesProvince_".$provinceID."\"),{
+                        \"type\":\"LineWithLine\",
+                        \"data\":{
+                            \"labels\": ["; foreach($reversedDaily as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo"],
+                            \"datasets\":[{
+                                pointHitRadius: 20,
+                                \"fill\": false,
+                                \"borderColor\": \"#eba834\",
+                                \"pointBackgroundColor\": \"#eba834\",
+                                \"data\": ["; $cumulativeCasesBuffer = 0; foreach($reversedDaily as $_value){ $cumulativeCasesBuffer+=(isset($_value->ReportedCases)?$_value->ReportedCases:0); echo $cumulativeCasesBuffer.",";} echo "]
+                            }]
+                        },
+                        \"options\":{
+                            \"responsive\": true,
+                            \"legend\": {
+                                \"display\": false
+                            },
+                            \"tooltips\": {
+                                \"intersect\": false,
+                                \"custom\": function(tooltip) {
+                                    if (!tooltip) return;
+                                    // disable displaying the color box;
+                                    tooltip.displayColors = false;
+                                }
+                            },
+                            \"elements\": {
+                                \"line\": {
+                                    \"tension\": 0.5
+                                },
+                                \"point\":{
+                                    \"radius\": 0
+                                }
+                            },
+                            \"scales\": {
+                                \"xAxes\": [{
+                                    \"gridLines\": {
+                                        \"display\": false,
+                                    },
+                                    \"ticks\": {
+                                        \"autoskip\": true,
+                                        \"autoSkipPadding\": 30,
+                                    }
+                                }],
+                                \"yAxes\": [{
+                                    \"id\": 'left-y-axis',
+                                    \"gridLines\": {
+                                        \"drawBorder\": false
+                                    },
+                                    type: 'linear',
+                                    \"ticks\": {
+                                        \"maxTicksLimit\": 5,
+                                        \"padding\": 15,
+                                        \"callback\": function(value) {
+                                            var ranges = [
+                                                { divider: 1e6, suffix: 'M' },
+                                                { divider: 1e3, suffix: 'k' }
+                                            ];
+                                            function formatNumber(n) {
+                                                for (var i = 0; i < ranges.length; i++) {
+                                                if (n >= ranges[i].divider) {
+                                                    return (n / ranges[i].divider).toString() + ranges[i].suffix;
+                                                }
+                                                }
+                                                return n;
+                                            }
+                                            return formatNumber(value);
+                                        }
+                                    },
+                                    \"position\": 'left'
+                                }]
+                            }
+                        },
+                    }
+                );
+                new Chart(
+                    document.getElementById(\"totalDeathsProvince_".$provinceID."\"),{
+                        \"type\":\"LineWithLine\",
+                        \"data\":{
+                            \"labels\": ["; foreach($reversedDaily as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo"],
+                            \"datasets\":[{
+                                pointHitRadius: 20,
+                                \"fill\": false,
+                                \"borderColor\": \"#eba834\",
+                                \"pointBackgroundColor\": \"#eba834\",
+                                \"data\": ["; $cumulativeDeathsBuffer = 0; foreach($reversedDaily as $_value){ $cumulativeDeathsBuffer+=(isset($_value->ReportedCases)?$_value->ReportedDeaths:0); echo $cumulativeDeathsBuffer.",";} echo "]
+                            }]
+                        },
+                        \"options\":{
+                            \"responsive\": true,
+                            \"legend\": {
+                                \"display\": false
+                            },
+                            \"tooltips\": {
+                                \"intersect\": false,
+                                \"custom\": function(tooltip) {
+                                    if (!tooltip) return;
+                                    // disable displaying the color box;
+                                    tooltip.displayColors = false;
+                                }
+                            },
+                            \"elements\": {
+                                \"line\": {
+                                    \"tension\": 0.5
+                                },
+                                \"point\":{
+                                    \"radius\": 0
+                                }
+                            },
+                            \"scales\": {
+                                \"xAxes\": [{
+                                    \"gridLines\": {
+                                        \"display\": false,
+                                    },
+                                    \"ticks\": {
+                                        \"autoskip\": true,
+                                        \"autoSkipPadding\": 30,
+                                    }
+                                }],
+                                \"yAxes\": [{
+                                    \"id\": 'left-y-axis',
+                                    \"gridLines\": {
+                                        \"drawBorder\": false
+                                    },
+                                    type: 'linear',
+                                    \"ticks\": {
+                                        \"maxTicksLimit\": 5,
+                                        \"padding\": 15,
+                                        \"callback\": function(value) {
+                                            var ranges = [
+                                                { divider: 1e6, suffix: 'M' },
+                                                { divider: 1e3, suffix: 'k' }
+                                            ];
+                                            function formatNumber(n) {
+                                                for (var i = 0; i < ranges.length; i++) {
+                                                if (n >= ranges[i].divider) {
+                                                    return (n / ranges[i].divider).toString() + ranges[i].suffix;
+                                                }
+                                                }
+                                                return n;
+                                            }
+                                            return formatNumber(value);
+                                        }
+                                    },
+                                    \"position\": 'left'
+                                }]
+                            }
+                        },
+                    }
+                );
+            </script>";
 
         $provinceID++;
     }
