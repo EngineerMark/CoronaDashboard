@@ -5,8 +5,10 @@
     $icBedsUsage = $hospitalData["intensive_care_beds_occupied"]["values"];
     $hospBedsUsage = $hospitalData["hospital_beds_occupied"]["values"];
 
-    $hospBedsUsageReverse = array_reverse($hospBedsUsage);
+    $icBedsUsageReverse = array_reverse($hospBedsUsage);
+    $hospBedsUsageReverse = array_reverse($icBedsUsage);
     $hospBedsDifference = $hospBedsUsageReverse[0]["covid_occupied"]-$hospBedsUsageReverse[1]["covid_occupied"];
+    $icBedsDifference = $icBedsUsageReverse[0]["covid_occupied"]-$icBedsUsageReverse[1]["covid_occupied"];
 
     $provinceData = GetProvinceData();
     $totalCases = 0;
@@ -93,7 +95,7 @@
                                 <div class="card chart-card">
                                     <div class="card-body">
                                         <h5 class="body-title">Hospitalizations</h5>
-                                        <h6><?php echo number_format($hospBedsUsageReverse[0]["covid_occupied"])." <small>".AdditionNumberString($hospBedsDifference,true,true)."</small>"; ?></h6>
+                                        <h6><?php echo number_format($hospBedsUsageReverse[0]["covid_occupied"]+$icBedsUsageReverse[0]["covid_occupied"])." <small>".AdditionNumberString($hospBedsDifference+$icBedsDifference,true,true)."</small>"; ?></h6>
                                         <canvas id="headerHospitalChart"></canvas>
                                     </div>
                                 </div>

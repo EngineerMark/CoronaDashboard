@@ -159,7 +159,7 @@ function ApiCall($url){
         mkdir("api_cache", 0777, true);
     }
 
-    $fileUrl = base64_encode($url);
+    $fileUrl = basename($url);
 
     $openApi = false;
     $cacheReady = false;
@@ -169,17 +169,19 @@ function ApiCall($url){
         $cacheReady = true;
         $age = time()-filemtime($path);
         if($age>$ageLimit 
-            || (($age/60/60<intval("H")-14)&&($age<$ageLimit)&&(intval(date("H"))>=14))
+            // || (($age/60/60<intval("H")-14)&&($age<$ageLimit)&&(intval(date("H"))>=14))
             ){
             $openApi = true;
         }            
     }
     $output = "";
-    if(!$openApi && $cacheReady){
+    if((!$openApi && $cacheReady)||file_exists($path."tmp")){
         $cachefile = fopen($path, "r");
         $output = fread($cachefile,filesize($path));
         fclose($cachefile);
     }else{
+        $cachingProcess = fopen($path."_tmp","w");
+        fclose($cachingProcess);
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -189,6 +191,7 @@ function ApiCall($url){
         $newcache = fopen($path, "w");
         fwrite($newcache, $output);
         fclose($newcache);
+        unlink($path."_tmp");
     }
     return $output;
 }

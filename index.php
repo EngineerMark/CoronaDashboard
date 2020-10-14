@@ -26,14 +26,19 @@
         </div><br />
         <div class="card chart-card">
             <div class="card-body pb-0">
-                <h4 class="card-title font-weight-bold">Cases</h4>
+                <h4 class="card-title font-weight-bold">Total Cases
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button id="caseDeathPairShowAll" type="button" class="btn btn-sm btn-primary btn-rounded">All</button>
+                        <button id="caseDeathPairShowRecent" type="button" class="btn btn-sm btn-primary btn-rounded">Last month</button>
+                    </div>
+                </h4>
                 <div class="d-flex justify-content-between">
                     <h3 class="align-self-end"><?php echo number_format($totalCases); ?></h3>
                     <p class="align-self-end"><?php echo AdditionNumberString($newCases, true, true); ?></p>
                 </div>
                 <canvas id="caseChart"></canvas>
                 <br />
-                <h4 class="card-title font-weight-bold">Deaths</h4>
+                <h4 class="card-title font-weight-bold">Total Deaths</h4>
                 <div class="d-flex justify-content-between">
                     <h3 class="align-self-end"><?php echo number_format($totalDeaths); ?></h3>
                     <p class="align-self-end"><?php echo AdditionNumberString($newDeaths, true, true); ?></p>

@@ -134,18 +134,33 @@
                 }
             );
 
+
+            <?php
+                $dataPointsNationwideNew = $dataPointsNationwide;
+                array_splice($dataPointsNationwideNew, 0, count($dataPointsNationwideNew)-31);
+
+                echo "var newCasesTotal = ["; foreach($dataPointsNationwide as $_value){ echo (isset($_value->ReportedCases)?$_value->ReportedCases:"").",";} echo "];";
+                echo "var newDeathsTotal = ["; foreach($dataPointsNationwide as $_value){ echo (isset($_value->ReportedDeaths)?$_value->ReportedDeaths:"").",";} echo "];";
+                echo "var newCasesRecent = ["; foreach($dataPointsNationwideNew as $_value){ echo (isset($_value->ReportedCases)?$_value->ReportedCases:"").",";} echo "];";
+                echo "var newDeathsRecent = ["; foreach($dataPointsNationwideNew as $_value){ echo (isset($_value->ReportedDeaths)?$_value->ReportedDeaths:"").",";} echo "];";
+
+                echo "var newCasesDatesTotal = ["; foreach($dataPointsNationwide as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
+                echo "var newCasesDatesRecent = ["; foreach($dataPointsNationwideNew as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
+                echo "var newDeathsDatesTotal = ["; foreach($dataPointsNationwide as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
+                echo "var newDeathsDatesRecent = ["; foreach($dataPointsNationwideNew as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
+            ?>
             // New cases chart
-            new Chart(
+            var newCaseChart = new Chart(
                 document.getElementById("caseChart"),{
                     "type":"LineWithLine",
                     "data":{
-                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} ?>],
+                        "labels": newCasesDatesTotal,
                         "datasets":[{
                             pointHitRadius: 20,
                             "fill": false,
                             "borderColor": "#eba834",
                             "pointBackgroundColor": "#eba834",
-                            "data": [<?php foreach($dataPointsNationwide as $_value){ echo (isset($_value->ReportedCases)?$_value->ReportedCases:"").",";} ?>]
+                            "data": newCasesTotal
                         }]
                     },
                     "options":{
@@ -212,17 +227,17 @@
             );
 
             // New deaths chart
-            new Chart(
+            var newDeathChart = new Chart(
                 document.getElementById("deathChart"),{
                     "type":"LineWithLine",
                     "data":{
-                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} ?>],
+                        "labels": newDeathsDatesTotal,
                         "datasets":[{
                             pointHitRadius: 20,
                             "fill": false,
                             "borderColor": "#eb4034",
                             "pointBackgroundColor": "#eb4034",
-                            "data": [<?php foreach($dataPointsNationwide as $_value){ echo (isset($_value->ReportedDeaths)?$_value->ReportedDeaths:"").",";} ?>]
+                            "data": newDeathsTotal
                         }]
                     },
                     "options":{
@@ -284,6 +299,26 @@
                     },
                 }
             );
+
+            $('#caseDeathPairShowRecent').click(function () {
+                newCaseChart.data.datasets[0].data = newCasesRecent;
+                newCaseChart.data.labels = newCasesDatesRecent;
+                newCaseChart.update();
+
+                newDeathChart.data.datasets[0].data = newDeathsRecent;
+                newDeathChart.data.labels = newDeathsDatesRecent;
+                newDeathChart.update();
+            });
+
+            $('#caseDeathPairShowAll').click(function () {
+                newCaseChart.data.datasets[0].data = newCasesTotal;
+                newCaseChart.data.labels = newCasesDatesTotal;
+                newCaseChart.update();
+
+                newDeathChart.data.datasets[0].data = newDeathsTotal;
+                newDeathChart.data.labels = newDeathsDatesTotal;
+                newDeathChart.update();
+            });
 
             // Header Total cases chart
             new Chart(
