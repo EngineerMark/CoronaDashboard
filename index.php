@@ -5,7 +5,7 @@
     <div class="col-md-6 pb-3">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title font-weight-bold">Reproductionvalues</h4>
+                <h4 class="card-title font-weight-bold"><i class="fas fa-project-diagram"></i> Reproductionvalues</h4>
                 <div class="card-text"><?php
                     $reproData = GetReproductionValues();
                     $reproData = array_slice($reproData, 1, 92);
@@ -26,7 +26,7 @@
         </div><br />
         <div class="card chart-card">
             <div class="card-body pb-0">
-                <h4 class="card-title font-weight-bold">Total Cases
+                <h4 class="card-title font-weight-bold"><i class="fas fa-head-side-cough"></i> Total Cases
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button id="caseDeathPairShowAll" type="button" class="btn btn-sm btn-primary btn-rounded">All</button>
                         <button id="caseDeathPairShowRecent" type="button" class="btn btn-sm btn-primary btn-rounded">Last month</button>
@@ -38,7 +38,7 @@
                 </div>
                 <canvas id="caseChart"></canvas>
                 <br />
-                <h4 class="card-title font-weight-bold">Total Deaths</h4>
+                <h4 class="card-title font-weight-bold"><i class="fas fa-skull"></i> Total Deaths</h4>
                 <div class="d-flex justify-content-between">
                     <h3 class="align-self-end"><?php echo number_format($totalDeaths); ?></h3>
                     <p class="align-self-end"><?php echo AdditionNumberString($newDeaths, true, true); ?></p>
@@ -51,9 +51,25 @@
     <div class="col-md-6 pb-3">
         <div class="card">
             <div class="card-body">
+                <h4 class="card-title font-weight-bold"><i class="fas fa-hand-paper"></i> Measures</h4>
+                <div class="card-text">
+                    <p><small>What can you do to prevent the spread of COVID-19?</small></p>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">Keep 1.5 meter distance from other people <i class="fas fa-people-arrows"></i></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">Don't shake any hands <i class="fas fa-handshake-alt-slash"></i></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">Travel outside of rush hours <i class="fas fa-train"></i></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">Wear a mask in public spaces <i class="fas fa-head-side-mask"></i></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">Work as much as possible from home <i class="fas fa-laptop-house"></i></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">Wash your hands often <i class="fas fa-hands-wash"></i></li>
+                    </lul>
+                </div>
+            </div>
+        </div><br />
+        <div class="card">
+            <div class="card-body">
                 <div class="table-responsive-sm">
                     <table id="provinceNumbers" class="table table-hover table-sm sortable">
-                        <thead>
+                        <thead class="bg-light">
                             <tr>
                                 <th scope="col">Province</th>
                                 <th scope="col">Cases</th>
@@ -99,17 +115,27 @@
         $Municipalities = $province->Municipalities;
         ksort($Municipalities);
         echo "<div class=\"modal fade\" id=\"provinceData_".$provinceID."\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"provinceData_".$provinceID."_Label\" aria-hidden=\"true\">
-                <div class=\"modal-dialog\" role=\"document\">
+                <div class=\"modal-dialog modal-lg\" role=\"document\">
                     <div class=\"modal-content\">
                         <div class=\"modal-header\">
-                            <h5 class=\"modal-title\" id=\"provinceData_".$provinceID."_Label\">".$province->RegionName."</h5>
+                            <h5 class=\"modal-title\" id=\"provinceData_".$provinceID."_Label\">".$province->RegionName." <small>Population: ".number_format($provinceTable[$province->RegionName][1])."</small></h5>
                             <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">
                                 <span aria-hidden=\"true\">&times;</span>
                             </button>
                         </div>
                         <div class=\"modal-body\">
+                            <div class=\"row\">
+                                <div class=\"col\">
+                                    <p>Total Cases: ".number_format($province->TotalCases)." <small>".AdditionNumberString($newCases, true, true)."</small></p>
+                                    <p>Total Deaths: ".number_format($province->TotalDeaths)." <small>".AdditionNumberString($newDeaths, true, true)."</small></p>
+                                </div>
+                                <div class=\"col\">
+                                    <p>".number_format(PerValue($province->TotalCases,$provinceTable[$province->RegionName][1],1000))."/1,000 cases</p>
+                                    <p>".number_format(PerValue($province->TotalDeaths,$provinceTable[$province->RegionName][1],1000))."/1,000 deaths</p>
+                                </div>
+                            </div>
                             <table id=\"province_".$provinceID."_municipalityNumbers\" class=\"table table-hover table-sm sortable\">
-                                <thead>
+                                <thead class=\"bg-light\">
                                     <tr>
                                         <th scope=\"col\">Province</th>
                                         <th scope=\"col\">Cases</th>

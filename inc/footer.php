@@ -1,41 +1,60 @@
-            <div class="row">
-                <div class="col-lg-6">
-                    <!-- About -->
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title"><i class="fas fa-info-circle"></i> About</h4>
-                            <div class="card-text">
-                                This website mirrors alot from the official <a target="_blank" href="https://coronadashboard.rijksoverheid.nl/">RIVM Dashboard</a>, 
-                                but might contain few invisible data information. 
-                                The goal of this website is primarly to seperate it to a standalone location. 
-                                This is also a personal project of mine to develop in these homestaying times.
-                                <br />
-                                The Netherlands does not provide official numbers on recovered COVID-19 patients. Therefore this is not included on the website (yet).
-                                <br />
-                                <br />
-                                Please stay at home and wear a mask when near other people.
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <!-- About -->
+                                <h4 class="card-title font-weight-bold"><i class="fas fa-info-circle"></i> About</h4>
+                                <div class="card-text">
+                                    This website mirrors alot from the official <a target="_blank" href="https://coronadashboard.rijksoverheid.nl/">RIVM Dashboard</a>, 
+                                    but might contain few invisible data information. 
+                                    The goal of this website is primarly to seperate it to a standalone location. 
+                                    This is also a personal project of mine to develop in these homestaying times.
+                                    <br />
+                                    The Netherlands does not provide official numbers on recovered COVID-19 patients. Therefore this is not included on the website (yet).
+                                    <br />
+                                    <br />
+                                    Please stay at home and wear a mask when near other people.
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <!-- Credits -->
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Credits and Sources</h4>
-                            <div class="card-text">
-                                <ul>
-                                    <li>Datasets: <a target="_blank" href="https://rivm.nl/">RIVM</a>, <a target="_blank" href="https://rijksoverheid.nl/">Rijksoverheid</a>, <a target="_blank" href="https://overheid.nl/">Overheid</a></li>
-                                    <li><a target="_blank" href="https://ec.europa.eu/">European Commission</a></li>
-                                    <li><a target="_blank" href="https://mdbootstrap.com/">Material Design Bootstrap</a></li>
-                                    <li><a target="_blank" href="https://fontawesome.com/">Font Awesome</a></li>
-                                    <li><a target="_blank" href="https://www.chartjs.org/">ChartJS</a>, <a target="_blank" href="https://www.amcharts.com/">amCharts</a></li>
-                                </ul>
+                            <div class="col-lg-6">
+                                <!-- Credits -->
+                                <h4 class="card-title font-weight-bold"><i class="fas fa-address-book"></i> Credits and Sources</h4>
+                                <div class="card-text">
+                                    <small>A list where all external content comes from.</small>
+                                    <ul>
+                                        <li><a target="_blank" href="https://rivm.nl/">RIVM</a>, <a target="_blank" href="https://rijksoverheid.nl/">Rijksoverheid</a></li>
+                                        <li><a target="_blank" href="https://ec.europa.eu/">European Commission</a></li>
+                                        <li><a target="_blank" href="https://mdbootstrap.com/">Material Design Bootstrap</a></li>
+                                        <li><a target="_blank" href="https://fontawesome.com/">Font Awesome</a></li>
+                                        <li><a target="_blank" href="https://www.chartjs.org/">ChartJS</a>, <a target="_blank" href="https://www.amcharts.com/">amCharts</a></li>
+                                        <li><a target="_blank" href="https://disqus.com/">Disqus</a></li>
+                                    </ul>
+                                </div>
                             </div>
+                        </div><br />
+                        <h4 class="card-title font-weight-bold"><i class="fas fa-code-branch"></i> Opensource</h4>
+                        <div class="card-text">
+                            <p>Currently, the sourcecode is still closed. Reason for this is: no data is ever stored and there is a premium service being used for the structure of the website (MDBootstrap).<br/>
+                                Once I found a good way to Git this site without leaking all the Pro edition sections of it, the repository will be set to public.</p>
                         </div>
                     </div>
                 </div>
             </div><br />
+            <div class="modal fade" id="covidChat" tabindex="-1" role="dialog" aria-labelledby="covidChatLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="covidChatLabel">Discuss COVID-19</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="disqus_thread"></div>
+                    </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <script src="js/jquery.min.js"></script>
         <script src="js/popper.min.js"></script>
@@ -53,24 +72,8 @@
 
         <script src="js/scripts.js"></script>
         <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+        <!-- Charts Code -->
         <script>
-            <?php
-                $provinceTable = [
-                    "Drenthe" => ["NL-DR", 492167],
-                    "Flevoland" => ["NL-FL", 416546],
-                    "Friesland" => ["NL-FR", 647672],
-                    "Gelderland" => ["NL-GE", 2071972],
-                    "Groningen" => ["NL-GR", 583990],
-                    "Limburg" => ["NL-LI", 1116137],
-                    "Noord-Brabant" => ["NL-NB", 2544806],
-                    "Noord-Holland" => ["NL-NH", 2853359],
-                    "Overijssel" => ["NL-OV", 1156431],
-                    "Utrecht" => ["NL-UT", 1342158],
-                    "Zeeland" => ["NL-ZE", 383032],
-                    "Zuid-Holland" => ["NL-ZH", 3673893]
-                ];
-            ?>
-
             // Reproductionvalue chart
             new Chart(
                 document.getElementById("reproGraph"),{
@@ -604,6 +607,7 @@
                 ?>
             ];
 
+            
             // Configure series tooltip
             var polygonTemplate = polygonSeries.mapPolygons.template;
             polygonTemplate.tooltipText = "{name}: {value}";
@@ -613,8 +617,23 @@
             // Create hover state and set alternative fill color
             var hs = polygonTemplate.states.create("hover");
             hs.properties.fill = chart.colors.getIndex(9).brighten(-0.3);
-
+            
             }); // end am4core.ready()
+        </script>
+        <!-- Disqus Code -->
+        <script>
+        /*
+        var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        */
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://dutchcovid.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
         </script>
     </body>
 </html>

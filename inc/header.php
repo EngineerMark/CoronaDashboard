@@ -62,7 +62,7 @@
                 <span class="navbar-brand"><i class="fas fa-virus"></i> COVID-19 Dashboard</span>
             </nav>
             <br />
-            <div class="alert alert-danger" role="alert"><i class="fas fa-exclamation-triangle"></i> The current situation in the Netherlands is <strong>bad</strong>. Please minimize as much contact as possible.</div>
+            <div class="alert alert-danger" role="alert"><i class="fas fa-exclamation-triangle"></i> The current situation in the Netherlands is <strong>bad</strong>. Please minimize as much physical contact as possible.</div>
             <div class="card card-image text-center" style="background-image: url(https://ec.europa.eu/culture/sites/default/files/styles/oe_theme_medium_no_crop/public/2020-09/cover-Covid19.png?itok=PPFgniH3);">
 
                 <!-- Content -->
@@ -72,6 +72,7 @@
                         <h3 class="card-title pt-2"><strong>Dutch Coronavirus Dashboard</strong></h3>
                         <p>Visualizing the coronavirus pandemic in the Netherlands. Currently one of the worst hit countries in europe.</p>
                         <!-- <a class="btn btn-pink"><i class="fas fa-clone left"></i> View project</a> -->
+                        <button data-toggle="modal" data-target="#covidChat" type="button" class="btn btn-danger btn-sm btn-rounded">Discuss</button>
                         <div class="row text-black-50">
                             <div class="col-lg-4">
                                 <div class="card chart-card">

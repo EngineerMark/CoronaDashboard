@@ -3,6 +3,21 @@
 date_default_timezone_set("Europe/Amsterdam");
 $dutchPopulation = 17019800;
 
+$provinceTable = [
+    "Drenthe" => ["NL-DR", 492167],
+    "Flevoland" => ["NL-FL", 416546],
+    "Friesland" => ["NL-FR", 647672],
+    "Gelderland" => ["NL-GE", 2071972],
+    "Groningen" => ["NL-GR", 583990],
+    "Limburg" => ["NL-LI", 1116137],
+    "Noord-Brabant" => ["NL-NB", 2544806],
+    "Noord-Holland" => ["NL-NH", 2853359],
+    "Overijssel" => ["NL-OV", 1156431],
+    "Utrecht" => ["NL-UT", 1342158],
+    "Zeeland" => ["NL-ZE", 383032],
+    "Zuid-Holland" => ["NL-ZH", 3673893]
+];
+
 //Adds an arrow up, down or a straight line if number is negative/positive,
 //used for additions/subtractions on cases etc
 function AdditionNumberString($val, $positiveIsBad = true, $formatNumber = false){
