@@ -175,7 +175,7 @@ function ApiCall($url){
         }            
     }
     $output = "";
-    if((!$openApi && $cacheReady)||file_exists($path."tmp")){
+    if((!$openApi && $cacheReady)||file_exists($path."tmp")||!url_exists($url)){
         $cachefile = fopen($path, "r");
         $output = fread($cachefile,filesize($path));
         fclose($cachefile);
@@ -223,5 +223,9 @@ function time_elapsed_string($datetime, $full = false) {
 
     if (!$full) $string = array_slice($string, 0, 1);
     return $string ? implode(', ', $string) . ' ago' : 'just now';
+}
+
+function url_exists($url) {
+    return curl_init($url) !== false;
 }
 ?>

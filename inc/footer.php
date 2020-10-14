@@ -25,7 +25,7 @@
                             <h4 class="card-title">Credits and Sources</h4>
                             <div class="card-text">
                                 <ul>
-                                    <li>Coronavirus Datasets: <a target="_blank" href="https://rivm.nl/">RIVM</a>, <a target="_blank" href="https://rijksoverheid.nl/">Rijksoverheid</a></li>
+                                    <li>Datasets: <a target="_blank" href="https://rivm.nl/">RIVM</a>, <a target="_blank" href="https://rijksoverheid.nl/">Rijksoverheid</a>, <a target="_blank" href="https://overheid.nl/">Overheid</a></li>
                                     <li><a target="_blank" href="https://ec.europa.eu/">European Commission</a></li>
                                     <li><a target="_blank" href="https://mdbootstrap.com/">Material Design Bootstrap</a></li>
                                     <li><a target="_blank" href="https://fontawesome.com/">Font Awesome</a></li>
