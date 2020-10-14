@@ -82,6 +82,8 @@
                 Last update: <?php echo time_elapsed_string("@".strtotime($regDate." 10:00:00")); ?>
             </div>
             <div class="card-body">
+                <div class="netherlandsheatmap" id="netherlandsheatmap"></div>
+                <small>Cases per 100.000 inhabitants</small>
             </div>
         </div>
     </div>

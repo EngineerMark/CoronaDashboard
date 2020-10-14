@@ -44,7 +44,7 @@
 
         <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
         <script src="https://cdn.amcharts.com/lib/4/maps.js"></script>
-        <script src="https://cdn.amcharts.com/lib/4/geodata/netherlandsLow.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/geodata/netherlandsHigh.js"></script>
         <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
@@ -54,6 +54,23 @@
         <script src="js/scripts.js"></script>
         <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
         <script>
+            <?php
+                $provinceTable = [
+                    "Drenthe" => ["NL-DR", 492167],
+                    "Flevoland" => ["NL-FL", 416546],
+                    "Friesland" => ["NL-FR", 647672],
+                    "Gelderland" => ["NL-GE", 2071972],
+                    "Groningen" => ["NL-GR", 583990],
+                    "Limburg" => ["NL-LI", 1116137],
+                    "Noord-Brabant" => ["NL-NB", 2544806],
+                    "Noord-Holland" => ["NL-NH", 2853359],
+                    "Overijssel" => ["NL-OV", 1156431],
+                    "Utrecht" => ["NL-UT", 1342158],
+                    "Zeeland" => ["NL-ZE", 383032],
+                    "Zuid-Holland" => ["NL-ZH", 3673893]
+                ];
+            ?>
+
             // Reproductionvalue chart
             new Chart(
                 document.getElementById("reproGraph"),{
@@ -506,6 +523,63 @@
                     },
                 }
             );
+
+            // Heatmap
+            am4core.ready(function() {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create map instance
+            var chart = am4core.create("netherlandsheatmap", am4maps.MapChart);
+
+            // Set map definition
+            chart.geodata = am4geodata_netherlandsHigh;
+
+            // Set projection
+            chart.projection = new am4maps.projections.Mercator();
+
+            // Create map polygon series
+            var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+
+            //Set min/max fill color for each area
+            polygonSeries.heatRules.push({
+            property: "fill",
+            target: polygonSeries.mapPolygons.template,
+                min: chart.colors.getIndex(9).brighten(1),
+                max: chart.colors.getIndex(9).brighten(-0.3)
+            });
+
+            // Make map load polygon data (state shapes and names) from GeoJSON
+            polygonSeries.useGeodata = true;
+
+            // Set heatmap values for each state
+            polygonSeries.data = [
+                // {
+                //     id: "US-AL",
+                //     value: 4447100
+                // }
+                <?php
+                    foreach($provinceData as $province)
+                    echo "{
+                        \"id\":\"".$provinceTable[$province->RegionName][0]."\",
+                        \"value\":".round(PerValue($province->TotalCases, $provinceTable[$province->RegionName][1], 100000))."
+                    },";
+                ?>
+            ];
+
+            // Configure series tooltip
+            var polygonTemplate = polygonSeries.mapPolygons.template;
+            polygonTemplate.tooltipText = "{name}: {value}";
+            polygonTemplate.nonScalingStroke = true;
+            polygonTemplate.strokeWidth = 0.5;
+
+            // Create hover state and set alternative fill color
+            var hs = polygonTemplate.states.create("hover");
+            hs.properties.fill = chart.colors.getIndex(9).brighten(-0.3);
+
+            }); // end am4core.ready()
         </script>
     </body>
 </html>
