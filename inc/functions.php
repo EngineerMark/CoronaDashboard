@@ -179,7 +179,7 @@ function ApiCall($url){
     $openApi = false;
     $cacheReady = false;
     $path = "api_cache/".$fileUrl;
-    $ageLimit = 6000;
+    $ageLimit = 3000;
     if(file_exists($path)){
         $cacheReady = true;
         $age = time()-filemtime($path);
@@ -206,9 +206,9 @@ function ApiCall($url){
         $newcache = fopen($path, "w");
         fwrite($newcache, $output);
         fclose($newcache);
-        if(file_exists($path."tmp")){
-            unlink($path."_tmp");
-        }
+    }
+    if(file_exists($path."_tmp")){
+        unlink($path."_tmp");
     }
     return $output;
 }

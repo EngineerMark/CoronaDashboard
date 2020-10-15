@@ -155,6 +155,24 @@
                         $i++;
                     } 
                 echo "];";
+
+                echo "var newDeathsWeekAverage = [";
+                    $i = 0;
+                    foreach($dataPointsNationwideValues as $_dates){
+                        $avg = 0;
+                        $counted = 0;
+                        for($j=0;$j<7;$j++){
+                            if($i-$j>=0){
+                                $curVal = $dataPointsNationwideValues[$i-$j]->ReportedDeaths;
+                                $avg+=$curVal;
+                                $counted++;
+                            }
+                        }
+                        $avg/=$counted;
+                        echo (isset($avg)?round($avg):"").",";
+                        $i++;
+                    } 
+                echo "];";
             ?>
             // New cases chart
             var newCaseChart = new Chart(
@@ -254,6 +272,13 @@
                             "borderColor": "#eb4034",
                             "pointBackgroundColor": "#eb4034",
                             "data": newDeathsTotal
+                        },{
+                            "label": "7-Day average",
+                            pointHitRadius: 20,
+                            "fill": false,
+                            "borderColor": "#4287f5",
+                            "pointBackgroundColor": "#4287f5",
+                            "data": newDeathsWeekAverage
                         }]
                     },
                     "options":{
@@ -323,6 +348,7 @@
                 newCaseChart.update();
 
                 newDeathChart.data.datasets[0].data = newDeathsRecent;
+                newDeathChart.data.datasets[1].hidden = true;
                 newDeathChart.data.labels = newDeathsDatesRecent;
                 newDeathChart.update();
             });
@@ -334,6 +360,7 @@
                 newCaseChart.update();
 
                 newDeathChart.data.datasets[0].data = newDeathsTotal;
+                newDeathChart.data.datasets[1].hidden = false;
                 newDeathChart.data.labels = newDeathsDatesTotal;
                 newDeathChart.update();
             });
