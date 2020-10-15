@@ -118,6 +118,8 @@
         ksort($Municipalities);
         $reversedDaily = $province->DailyEvents;
         $reversedDaily = array_reverse($reversedDaily);
+        $reversedDaily = array_values($reversedDaily);
+        $dailyValues = array_values($province->DailyEvents);
         echo "<div class=\"modal fade\" id=\"provinceData_".$provinceID."\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"provinceData_".$provinceID."_Label\" aria-hidden=\"true\">
                 <div class=\"modal-dialog modal-lg\" role=\"document\">
                     <div class=\"modal-content\">
@@ -130,12 +132,12 @@
                         <div class=\"modal-body\">
                             <div class=\"row\">
                                 <div class=\"col\">
-                                    <p>Total Cases: ".number_format($province->TotalCases)." <small>".AdditionNumberString($newCases, true, true)."</small></p>
-                                    <p>Total Deaths: ".number_format($province->TotalDeaths)." <small>".AdditionNumberString($newDeaths, true, true)."</small></p>
+                                    <p>Total Cases: ".number_format($province->TotalCases)." <small>".AdditionNumberString($dailyValues[0]->ReportedCases, true, true)."</small></p>
+                                    <p>Total Deaths: ".number_format($province->TotalDeaths)." <small>".AdditionNumberString($dailyValues[0]->ReportedDeaths, true, true)."</small></p>
                                 </div>
                                 <div class=\"col\">
-                                    <p>".number_format(PerValue($province->TotalCases,$provinceTable[$province->RegionName][1],1000))."/1,000 cases</p>
-                                    <p>".number_format(PerValue($province->TotalDeaths,$provinceTable[$province->RegionName][1],1000))."/1,000 deaths</p>
+                                    <p>".number_format(PerValue($province->TotalCases,$provinceTable[$province->RegionName][1],1000))."/1,000 tested positive</p>
+                                    <p>".number_format(PerValue($province->TotalDeaths,$provinceTable[$province->RegionName][1],1000))."/1,000 died</p>
                                 </div>
                             </div>
                             <div class=\"row\">
