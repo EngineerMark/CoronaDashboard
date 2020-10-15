@@ -124,7 +124,8 @@
 
 
             <?php
-                $dataPointsNationwideNew = $dataPointsNationwide;
+                $dataPointsNationwideValues = array_values($dataPointsNationwide);
+                $dataPointsNationwideNew = $dataPointsNationwideValues;
                 array_splice($dataPointsNationwideNew, 0, count($dataPointsNationwideNew)-31);
 
                 echo "var newCasesTotal = ["; foreach($dataPointsNationwide as $_value){ echo (isset($_value->ReportedCases)?$_value->ReportedCases:"").",";} echo "];";
@@ -136,6 +137,24 @@
                 echo "var newCasesDatesRecent = ["; foreach($dataPointsNationwideNew as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
                 echo "var newDeathsDatesTotal = ["; foreach($dataPointsNationwide as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
                 echo "var newDeathsDatesRecent = ["; foreach($dataPointsNationwideNew as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
+
+                echo "var newCasesWeekAverage = [";
+                    $i = 0;
+                    foreach($dataPointsNationwideValues as $_dates){
+                        $avg = 0;
+                        $counted = 0;
+                        for($j=0;$j<7;$j++){
+                            if($i-$j>=0){
+                                $curVal = $dataPointsNationwideValues[$i-$j]->ReportedCases;
+                                $avg+=$curVal;
+                                $counted++;
+                            }
+                        }
+                        $avg/=$counted;
+                        echo (isset($avg)?round($avg):"").",";
+                        $i++;
+                    } 
+                echo "];";
             ?>
             // New cases chart
             var newCaseChart = new Chart(
@@ -144,11 +163,19 @@
                     "data":{
                         "labels": newCasesDatesTotal,
                         "datasets":[{
+                            "label": "New cases",
                             pointHitRadius: 20,
                             "fill": false,
                             "borderColor": "#eba834",
                             "pointBackgroundColor": "#eba834",
                             "data": newCasesTotal
+                        },{
+                            "label": "7-Day average",
+                            pointHitRadius: 20,
+                            "fill": false,
+                            "borderColor": "#4287f5",
+                            "pointBackgroundColor": "#4287f5",
+                            "data": newCasesWeekAverage
                         }]
                     },
                     "options":{
@@ -221,6 +248,7 @@
                     "data":{
                         "labels": newDeathsDatesTotal,
                         "datasets":[{
+                            "label":"New deaths",
                             pointHitRadius: 20,
                             "fill": false,
                             "borderColor": "#eb4034",
@@ -290,6 +318,7 @@
 
             $('#caseDeathPairShowRecent').click(function () {
                 newCaseChart.data.datasets[0].data = newCasesRecent;
+                newCaseChart.data.datasets[1].hidden = true;
                 newCaseChart.data.labels = newCasesDatesRecent;
                 newCaseChart.update();
 
@@ -300,6 +329,7 @@
 
             $('#caseDeathPairShowAll').click(function () {
                 newCaseChart.data.datasets[0].data = newCasesTotal;
+                newCaseChart.data.datasets[1].hidden = false;
                 newCaseChart.data.labels = newCasesDatesTotal;
                 newCaseChart.update();
 

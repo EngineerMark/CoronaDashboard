@@ -206,7 +206,9 @@ function ApiCall($url){
         $newcache = fopen($path, "w");
         fwrite($newcache, $output);
         fclose($newcache);
-        unlink($path."_tmp");
+        if(file_exists($path."tmp")){
+            unlink($path."_tmp");
+        }
     }
     return $output;
 }
