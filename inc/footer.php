@@ -500,14 +500,14 @@
                         "labels": [<?php foreach($icBedsUsage as $isValue){ echo "\"".date("M j Y",intval($isValue["date_of_report_unix"]))."\",";} ?>],
                         "datasets":[{
                             pointHitRadius: 20,
-                            "fill": false,
+                            "fill": true,
                             "borderColor": "#eb4034",
                             "pointBackgroundColor": "#eb4034",
                             "label":"IC beds",
                             "data": [<?php foreach($icBedsUsage as $isValue){ echo $isValue["covid_occupied"].",";} ?>]
                         },{
                             pointHitRadius: 20,
-                            "fill": false,
+                            "fill": true,
                             "borderColor": "#eba834",
                             "pointBackgroundColor": "#eba834",
                             "label":"Hospital beds",
@@ -515,7 +515,7 @@
                         }]
                     },
                     "options":{
-                        "responsive": true,
+                        "responsive": false,
                         "legend": {
                             "display": false
                         },
@@ -546,11 +546,10 @@
                                 }
                             }],
                             "yAxes": [{
-                                "id": 'left-y-axis',
                                 "gridLines": {
                                     "drawBorder": false
                                 },
-                                type: 'linear',
+                                "type": 'linear',
                                 "ticks": {
                                     "maxTicksLimit": 5,
                                     "padding": 15,
@@ -570,7 +569,7 @@
                                         return formatNumber(value);
                                     }
                                 },
-                                "position": 'left'
+                                "stacked": true,
                             }]
                         }
                     },
