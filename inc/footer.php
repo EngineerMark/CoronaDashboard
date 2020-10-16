@@ -56,7 +56,12 @@
                 </div>
             </div>
         </div>
-        <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+        <script>
+            $(document).ready(function() { $('body').bootstrapMaterialDesign(); });
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            })
+        </script>
         <!-- Charts Code -->
         <script>
             // Reproductionvalue chart
@@ -125,55 +130,87 @@
 
             <?php
                 $dataPointsNationwideValues = array_values($dataPointsNationwide);
+                $dataPointsNationwideValuesReversed = array_reverse($dataPointsNationwideValues);
                 $dataPointsNationwideNew = $dataPointsNationwideValues;
                 array_splice($dataPointsNationwideNew, 0, count($dataPointsNationwideNew)-31);
 
+                
                 echo "var newCasesTotal = ["; foreach($dataPointsNationwide as $_value){ echo (isset($_value->ReportedCases)?$_value->ReportedCases:"").",";} echo "];";
                 echo "var newDeathsTotal = ["; foreach($dataPointsNationwide as $_value){ echo (isset($_value->ReportedDeaths)?$_value->ReportedDeaths:"").",";} echo "];";
                 echo "var newCasesRecent = ["; foreach($dataPointsNationwideNew as $_value){ echo (isset($_value->ReportedCases)?$_value->ReportedCases:"").",";} echo "];";
                 echo "var newDeathsRecent = ["; foreach($dataPointsNationwideNew as $_value){ echo (isset($_value->ReportedDeaths)?$_value->ReportedDeaths:"").",";} echo "];";
-
+                
                 echo "var newCasesDatesTotal = ["; foreach($dataPointsNationwide as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
                 echo "var newCasesDatesRecent = ["; foreach($dataPointsNationwideNew as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
                 echo "var newDeathsDatesTotal = ["; foreach($dataPointsNationwide as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
                 echo "var newDeathsDatesRecent = ["; foreach($dataPointsNationwideNew as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
-
+                
                 echo "var newCasesWeekAverage = [";
-                    $i = 0;
-                    foreach($dataPointsNationwideValues as $_dates){
-                        $avg = 0;
-                        $counted = 0;
-                        for($j=0;$j<7;$j++){
-                            if($i-$j>=0){
-                                $curVal = $dataPointsNationwideValues[$i-$j]->ReportedCases;
-                                $avg+=$curVal;
-                                $counted++;
-                            }
+                $i = 0;
+                foreach($dataPointsNationwideValues as $_dates){
+                    $avg = 0;
+                    $counted = 0;
+                    for($j=0;$j<7;$j++){
+                        if($i-$j>=0){
+                            $curVal = $dataPointsNationwideValues[$i-$j]->ReportedCases;
+                            $avg+=$curVal;
+                            $counted++;
                         }
-                        $avg/=$counted;
-                        echo (isset($avg)?round($avg):"").",";
-                        $i++;
-                    } 
+                    }
+                    $avg/=$counted;
+                    echo (isset($avg)?round($avg):"").",";
+                    $i++;
+                } 
                 echo "];";
-
+                
                 echo "var newDeathsWeekAverage = [";
-                    $i = 0;
-                    foreach($dataPointsNationwideValues as $_dates){
-                        $avg = 0;
-                        $counted = 0;
-                        for($j=0;$j<7;$j++){
-                            if($i-$j>=0){
-                                $curVal = $dataPointsNationwideValues[$i-$j]->ReportedDeaths;
-                                $avg+=$curVal;
-                                $counted++;
-                            }
+                $i = 0;
+                foreach($dataPointsNationwideValues as $_dates){
+                    $avg = 0;
+                    $counted = 0;
+                    for($j=0;$j<7;$j++){
+                        if($i-$j>=0){
+                            $curVal = $dataPointsNationwideValues[$i-$j]->ReportedDeaths;
+                            $avg+=$curVal;
+                            $counted++;
                         }
-                        $avg/=$counted;
-                        echo (isset($avg)?round($avg):"").",";
-                        $i++;
-                    } 
+                    }
+                    $avg/=$counted;
+                    echo (isset($avg)?round($avg):"").",";
+                    $i++;
+                } 
                 echo "];";
-            ?>
+                
+                $mostRecentData = end($dataPointsNationwideValues);
+                $dataPointsNationwidePrediction = [];
+                $predictionTime = 31; //Month prediction
+                $casesPreviousPeriodTotalGrowth = 0;
+                $casesPreviousPeriodGrowthPerDay = 0;
+                foreach($dataPointsNationwideValues as $oldDataPoint){
+                    $oldDataPointClone = $oldDataPoint->Clone();
+                    array_push($dataPointsNationwidePrediction, $oldDataPointClone);
+                }
+                
+                for($i=0;$i<$predictionTime;$i++){
+                    $diff = $dataPointsNationwideValuesReversed[$i]->ReportedCases-$dataPointsNationwideValuesReversed[$i+1]->ReportedCases;
+                    $casesPreviousPeriodTotalGrowth+=$diff;
+                }
+                $casesPreviousPeriodGrowthPerDay = $casesPreviousPeriodTotalGrowth/$predictionTime;
+
+                $casesPredictionPrevGrowth = $mostRecentData->ReportedCases;
+                for($i=0;$i<$predictionTime;$i++){
+                    $casesPredictionPrevGrowth += $casesPreviousPeriodGrowthPerDay*$averageRepro;
+                    // $newDay = date('F j, Y', strtotime('+1 day', strtotime($mostRecentDate)));
+                    $newDataPoint = new DataPoint();
+                    $newDataPoint->Date = date('F j, Y', strtotime("+".($i+1)." day", strtotime($mostRecentData->Date)));
+                    $newDataPoint->ReportedCases = round($casesPredictionPrevGrowth);
+                    array_push($dataPointsNationwidePrediction,$newDataPoint);
+                }
+
+                echo "var dataPointsNationwidePrediction = ["; foreach($dataPointsNationwidePrediction as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
+                echo "var casePrediction = ["; foreach($dataPointsNationwidePrediction as $_value){ echo (isset($_value->ReportedCases)?$_value->ReportedCases:"").",";} echo "];";
+                echo "var deathPrediction = ["; foreach($dataPointsNationwidePrediction as $_value){ echo (isset($_value->ReportedDeaths)?$_value->ReportedDeaths:"").",";} echo "];";
+                ?>
             // New cases chart
             var newCaseChart = new Chart(
                 document.getElementById("caseChart"),{
@@ -194,6 +231,15 @@
                             "borderColor": "#4287f5",
                             "pointBackgroundColor": "#4287f5",
                             "data": newCasesWeekAverage
+                        },
+                        {
+                            "label": "Prediction",
+                            pointHitRadius: 20,
+                            "fill": false,
+                            "borderColor": "#4287f5",
+                            "pointBackgroundColor": "#4287f5",
+                            "data": casePrediction,
+                            "hidden":true
                         }]
                     },
                     "options":{
@@ -279,6 +325,15 @@
                             "borderColor": "#4287f5",
                             "pointBackgroundColor": "#4287f5",
                             "data": newDeathsWeekAverage
+                        },
+                        {
+                            "label": "Prediction",
+                            pointHitRadius: 20,
+                            "fill": false,
+                            "borderColor": "#4287f5",
+                            "pointBackgroundColor": "#4287f5",
+                            "data": deathPrediction,
+                            "hidden":true
                         }]
                     },
                     "options":{
@@ -344,11 +399,13 @@
             $('#caseDeathPairShowRecent').click(function () {
                 newCaseChart.data.datasets[0].data = newCasesRecent;
                 newCaseChart.data.datasets[1].hidden = true;
+                newCaseChart.data.datasets[2].hidden = true;
                 newCaseChart.data.labels = newCasesDatesRecent;
                 newCaseChart.update();
 
                 newDeathChart.data.datasets[0].data = newDeathsRecent;
                 newDeathChart.data.datasets[1].hidden = true;
+                newDeathChart.data.datasets[2].hidden = true;
                 newDeathChart.data.labels = newDeathsDatesRecent;
                 newDeathChart.update();
             });
@@ -356,13 +413,29 @@
             $('#caseDeathPairShowAll').click(function () {
                 newCaseChart.data.datasets[0].data = newCasesTotal;
                 newCaseChart.data.datasets[1].hidden = false;
+                newCaseChart.data.datasets[2].hidden = true;
                 newCaseChart.data.labels = newCasesDatesTotal;
                 newCaseChart.update();
 
                 newDeathChart.data.datasets[0].data = newDeathsTotal;
                 newDeathChart.data.datasets[1].hidden = false;
+                newDeathChart.data.datasets[2].hidden = true;
                 newDeathChart.data.labels = newDeathsDatesTotal;
                 newDeathChart.update();
+            });
+
+            $('#caseDeathPairShowPrediction').click(function () {
+                newCaseChart.data.datasets[0].data = newCasesTotal;
+                newCaseChart.data.datasets[1].hidden = true;
+                newCaseChart.data.datasets[2].hidden = false;
+                newCaseChart.data.labels = dataPointsNationwidePrediction;
+                newCaseChart.update();
+
+                // newDeathChart.data.datasets[0].data = newDeathsTotal;
+                // newDeathChart.data.datasets[1].hidden = true;
+                // newDeathChart.data.datasets[2].hidden = false;
+                // newDeathChart.data.labels = dataPointsNationwidePrediction;
+                // newDeathChart.update();
             });
 
             // Header Total cases chart

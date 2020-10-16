@@ -10,7 +10,8 @@
                     $reproData = GetReproductionValues();
                     $reproData = array_slice($reproData, 1, 92);
                     $reproDataReverse = array_reverse($reproData);
-                    echo "<h5>Current average: <span class=\"badge badge-primary\">".strval((floatval($reproData[13]["Rt_low"])+floatval($reproData[13]["Rt_up"]))*0.5)."</span></h5><br />";
+                    $averageRepro = (floatval($reproData[13]["Rt_low"])+floatval($reproData[13]["Rt_up"]))*0.5;
+                    echo "<h5>Current average: <span class=\"badge badge-primary\">".strval($averageRepro)."</span></h5><br />";
                     echo "<canvas id=\"reproGraph\"></canvas>";
                     echo "<p>These numbers are averages of the country, each region can differ. Data up to 3 months ago. Average goes to 2 weeks ago, using newer values makes it harder to represent the actual state.</p>";
                     echo "<p>This is a key value in tracking the virus. If kept under 1, the daily cases decrease and the virus spreads slower. Above 1 means the virus is spreading more.</p>";
@@ -30,6 +31,7 @@
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button id="caseDeathPairShowAll" type="button" class="btn btn-sm btn-primary btn-rounded">All</button>
                         <button id="caseDeathPairShowRecent" type="button" class="btn btn-sm btn-primary btn-rounded">Last month</button>
+                        <button id="caseDeathPairShowPrediction" type="button" class="btn btn-sm btn-primary btn-rounded">Prediction</button>
                     </div>
                 </h4>
                 <div class="d-flex justify-content-between">
@@ -54,7 +56,7 @@
                 <h4 class="card-title font-weight-bold"><i class="fas fa-hand-paper"></i> Measures</h4>
                 <div class="card-text">
                     <p><small>What can you do to prevent the spread of COVID-19?</small></p>
-                    <ul class="list-group">
+                    <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center">Keep 1.5 meter distance from other people <i class="fas fa-people-arrows"></i></li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">Don't shake any hands <i class="fas fa-handshake-alt-slash"></i></li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">Travel outside of rush hours <i class="fas fa-train"></i></li>
@@ -88,7 +90,7 @@
                                     $regDate = $dailyEvents[0]->Date;
                                     echo "<tr data-toggle=\"modal\" data-target=\"#provinceData_".$provinceID."\">";
                                     echo "<td>".$province->RegionName."</td>";
-                                    echo "<td>".$province->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
+                                    echo "<td value=\"".$province->TotalCases."\">".$province->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
                                     echo "<td>".$province->TotalDeaths." <small>".($dailyEvents[0]->ReportedDeaths!=0?AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true):"")."</small></td>";
                                     echo "<td>".$province->TotalHospitalAdmissions." <small>".($dailyEvents[0]->ReportedHospitalAdmissions!=0?AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true):"")."</small></td>";
                                     echo "</tr>";
@@ -161,9 +163,18 @@
                                 </thead>
                                 <tbody>";
                                 foreach($Municipalities as $municipality){
+                                    $inRandstad = in_array($municipality->RegionName,$regions["Randstad"]);
+                                    $isCapital = $municipality->RegionName==$provinceTable[$province->RegionName][2];
                                     $dailyEvents = array_values($municipality->DailyEvents);
+                                    $icons = "";
+                                    if($inRandstad){
+                                        $icons.="<i class=\"fas fa-city material-tooltip-main\" data-toggle=\"tooltip\" title=\"Randstad\"></i> ";
+                                    }
+                                    if($isCapital){
+                                        $icons.="<i class=\"fas fa-crown material-tooltip-main\" data-toggle=\"tooltip\" title=\"Province capital\"></i>";
+                                    }
                                     echo "<tr>";
-                                    echo "<td>".$municipality->RegionName."</td>";
+                                    echo "<td class=\"d-flex justify-content-between align-items-center\">".$municipality->RegionName." <small>".$icons."</small></td>";
                                     echo "<td>".$municipality->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
                                     echo "<td>".$municipality->TotalDeaths." <small>".($dailyEvents[0]->ReportedDeaths!=0?AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true):"")."</small></td>";
                                     echo "<td>".$municipality->TotalHospitalAdmissions." <small>".($dailyEvents[0]->ReportedHospitalAdmissions!=0?AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true):"")."</small></td>";
@@ -172,6 +183,9 @@
                                 echo "
                                 </tbody>
                             </table>
+                            <br />
+                            <p>Legend</p>
+                            <p><small><i class=\"fas fa-crown\"></i> Province capital, <i class=\"fas fa-city\"></i> Randstad</small></p>
                         </div>
                     </div>
                 </div>

@@ -4,18 +4,26 @@ date_default_timezone_set("Europe/Amsterdam");
 $dutchPopulation = 17019800;
 
 $provinceTable = [
-    "Drenthe" => ["NL-DR", 492167],
-    "Flevoland" => ["NL-FL", 416546],
-    "Friesland" => ["NL-FR", 647672],
-    "Gelderland" => ["NL-GE", 2071972],
-    "Groningen" => ["NL-GR", 583990],
-    "Limburg" => ["NL-LI", 1116137],
-    "Noord-Brabant" => ["NL-NB", 2544806],
-    "Noord-Holland" => ["NL-NH", 2853359],
-    "Overijssel" => ["NL-OV", 1156431],
-    "Utrecht" => ["NL-UT", 1342158],
-    "Zeeland" => ["NL-ZE", 383032],
-    "Zuid-Holland" => ["NL-ZH", 3673893]
+    "Drenthe" => ["NL-DR", 492167, "Assen"],
+    "Flevoland" => ["NL-FL", 416546, "Lelystad"],
+    "Friesland" => ["NL-FR", 647672, "Leeuwarden"],
+    "Gelderland" => ["NL-GE", 2071972, "Arnhem"],
+    "Groningen" => ["NL-GR", 583990, "Groningen"],
+    "Limburg" => ["NL-LI", 1116137, "Maastricht"],
+    "Noord-Brabant" => ["NL-NB", 2544806, "'s-Hertogenbosch"],
+    "Noord-Holland" => ["NL-NH", 2853359, "Haarlem"],
+    "Overijssel" => ["NL-OV", 1156431, "Zwolle"],
+    "Utrecht" => ["NL-UT", 1342158, "Utrecht"],
+    "Zeeland" => ["NL-ZE", 383032, "Middelburg"],
+    "Zuid-Holland" => ["NL-ZH", 3673893,"'s-Gravenhage"]
+];
+
+$regions = [
+    "Randstad" => ["'s-Gravenhage","Amsterdam","Rotterdam",
+    "Utrecht","Almere","Amersfoort","Haarlem","Zaanstad",
+    "Haarlemmermeer","Zoetermeer","Leiden","Dordrecht","Nieuwegein",
+    "Alphen aan den Rijn","Westland","Delft","Alkmaar","Prumerend",
+    "Schiedam","Hoorn","Vlaardingen","Gouda"]
 ];
 
 //Adds an arrow up, down or a straight line if number is negative/positive,
