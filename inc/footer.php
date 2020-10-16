@@ -183,26 +183,31 @@
                 
                 $mostRecentData = end($dataPointsNationwideValues);
                 $dataPointsNationwidePrediction = [];
-                $predictionTime = 31; //Month prediction
-                $casesPreviousPeriodTotalGrowth = 0;
-                $casesPreviousPeriodGrowthPerDay = 0;
                 foreach($dataPointsNationwideValues as $oldDataPoint){
                     $oldDataPointClone = $oldDataPoint->Clone();
                     array_push($dataPointsNationwidePrediction, $oldDataPointClone);
                 }
+
+
+                $predictionTime = 62; //2 Month prediction
+                $casesPreviousPeriodTotalGrowth = 0;
+                $casesPreviousPeriodGrowthPerDay = 0;
                 
-                for($i=0;$i<$predictionTime;$i++){
+                for($i=0;$i<31;$i++){
                     $diff = $dataPointsNationwideValuesReversed[$i]->ReportedCases-$dataPointsNationwideValuesReversed[$i+1]->ReportedCases;
                     $casesPreviousPeriodTotalGrowth+=$diff;
                 }
-                $casesPreviousPeriodGrowthPerDay = $casesPreviousPeriodTotalGrowth/$predictionTime;
+                $casesPreviousPeriodGrowthPerDay = $casesPreviousPeriodTotalGrowth/31;
 
                 $casesPredictionPrevGrowth = $mostRecentData->ReportedCases;
+
                 for($i=0;$i<$predictionTime;$i++){
-                    $casesPredictionPrevGrowth += $casesPreviousPeriodGrowthPerDay*$averageRepro;
+                    $casesPredictionPrevGrowth += (($casesPreviousPeriodGrowthPerDay))*($averageRepro*2);
+                    $casesPredictionPrevGrowth *=0.96;
                     // $newDay = date('F j, Y', strtotime('+1 day', strtotime($mostRecentDate)));
                     $newDataPoint = new DataPoint();
                     $newDataPoint->Date = date('F j, Y', strtotime("+".($i+1)." day", strtotime($mostRecentData->Date)));
+                    $casesPredictionPrevGrowth = max(0,$casesPredictionPrevGrowth);
                     $newDataPoint->ReportedCases = round($casesPredictionPrevGrowth);
                     array_push($dataPointsNationwidePrediction,$newDataPoint);
                 }

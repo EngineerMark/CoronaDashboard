@@ -5,10 +5,10 @@ Chart.controllers.LineWithLine = Chart.controllers.line.extend({
 
       if (this.chart.tooltip._active && this.chart.tooltip._active.length) {
          var activePoint = this.chart.tooltip._active[0],
-             ctx = this.chart.ctx,
-             x = activePoint.tooltipPosition().x,
-             topY = this.chart.legend.bottom,
-             bottomY = this.chart.chartArea.bottom;
+            ctx = this.chart.ctx,
+            x = activePoint.tooltipPosition().x,
+            topY = this.chart.legend.bottom,
+            bottomY = this.chart.chartArea.bottom;
 
          // draw line
          ctx.save();
@@ -24,8 +24,8 @@ Chart.controllers.LineWithLine = Chart.controllers.line.extend({
 });
 
 $("a[href^='https']").each(function() {
-    $(this).css({
+   $(this).css({
       background: "url(https://www.google.com/s2/favicons?domain=" + this.hostname + ") left center no-repeat",
       "padding-left": "20px"
-    });    
+   });    
 });
