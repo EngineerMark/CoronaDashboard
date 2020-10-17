@@ -34,8 +34,7 @@
                         </div><br />
                         <h4 class="card-title font-weight-bold"><i class="fas fa-code-branch"></i> Opensource</h4>
                         <div class="card-text">
-                            <p>Currently, the sourcecode is still closed. Reason for this is: no data is ever stored and there is a premium service being used for the structure of the website (MDBootstrap).<br/>
-                                Once I found a good way to Git this site without leaking all the Pro edition sections of it, the repository will be set to public.</p>
+                            <p>The full source code of this project can be found on <a target="_blank" href="https://github.com/EngineerMark/CoronaDashboard">GitHub</a></p>
                         </div>
                     </div>
                 </div>
@@ -606,18 +605,26 @@
                         "labels": [<?php foreach($icBedsUsage as $isValue){ echo "\"".date("M j Y",intval($isValue["date_of_report_unix"]))."\",";} ?>],
                         "datasets":[{
                             pointHitRadius: 20,
-                            "fill": true,
+                            "fill": false,
                             "borderColor": "#eb4034",
                             "pointBackgroundColor": "#eb4034",
                             "label":"IC beds",
                             "data": [<?php foreach($icBedsUsage as $isValue){ echo $isValue["covid_occupied"].",";} ?>]
                         },{
                             pointHitRadius: 20,
-                            "fill": true,
+                            "fill": false,
                             "borderColor": "#eba834",
                             "pointBackgroundColor": "#eba834",
                             "label":"Hospital beds",
                             "data": [<?php foreach($hospBedsUsage as $isValue){ echo $isValue["covid_occupied"].",";} ?>]
+                        },
+                        {
+                            pointHitRadius: 20,
+                            "fill": false,
+                            "borderColor": "#bababa",
+                            "pointBackgroundColor": "#eba834",
+                            "label":"IC Limit",
+                            "data": [<?php foreach($hospBedsUsage as $isValue){ echo "1600,";} ?>]
                         }]
                     },
                     "options":{

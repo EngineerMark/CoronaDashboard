@@ -88,36 +88,38 @@
                         <p>Visualizing the coronavirus pandemic in the Netherlands. Currently one of the worst hit countries in europe.</p>
                         <!-- <a class="btn btn-pink"><i class="fas fa-clone left"></i> View project</a> -->
                         <button data-toggle="modal" data-target="#covidChat" type="button" class="btn btn-danger btn-sm btn-rounded">Discuss</button>
-                        <div class="row text-black-50">
-                            <div class="col-lg-4">
-                                <div class="card chart-card">
-                                    <div class="card-body">
-                                        <h5 class="body-title">Total Cases</h5>
-                                        <h6><?php echo number_format($totalCases)." <small>".AdditionNumberString($newCases,true,true)."</small>"; ?></h6>
-                                        <canvas id="headerTotalCasesChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="card chart-card">
-                                    <div class="card-body">
-                                        <h5 class="body-title">Total Deaths</h5>
-                                        <h6><?php echo number_format($totalDeaths)." <small>".AdditionNumberString($newDeaths,true,true)."</small>"; ?></h6>
-                                        <canvas id="headerTotalDeathsChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="card chart-card">
-                                    <div class="card-body">
-                                        <h5 class="body-title">Hospitalizations</h5>
-                                        <h6><?php echo number_format($hospBedsUsageReverse[0]["covid_occupied"]+$icBedsUsageReverse[0]["covid_occupied"])." <small>".AdditionNumberString($hospBedsDifference+$icBedsDifference,true,true)."</small>"; ?></h6>
-                                        <canvas id="headerHospitalChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
-            </div><br />
+            </div>
+            <br />
+            <div class="row text-black-50">
+                <div class="col-lg-4">
+                    <div class="card chart-card">
+                        <div class="card-body">
+                            <h5 class="body-title">Total Cases</h5>
+                            <h6><?php echo number_format($totalCases)." <small>".AdditionNumberString($newCases,true,true)."</small>"; ?></h6>
+                            <canvas id="headerTotalCasesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card chart-card">
+                        <div class="card-body">
+                            <h5 class="body-title">Total Deaths</h5>
+                            <h6><?php echo number_format($totalDeaths)." <small>".AdditionNumberString($newDeaths,true,true)."</small>"; ?></h6>
+                            <canvas id="headerTotalDeathsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card chart-card">
+                        <div class="card-body">
+                            <h5 class="body-title">Hospitalizations</h5>
+                            <h6><?php echo number_format($hospBedsUsageReverse[0]["covid_occupied"]+$icBedsUsageReverse[0]["covid_occupied"])." <small>".AdditionNumberString($hospBedsDifference+$icBedsDifference,true,true)."</small>"; ?></h6>
+                            <canvas id="headerHospitalChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
