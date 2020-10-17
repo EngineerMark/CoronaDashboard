@@ -56,6 +56,7 @@
                 </div>
             </div>
         </div>
+        <script src="js/scripts.js"></script>
         <script>
             $(document).ready(function() { $('body').bootstrapMaterialDesign(); });
             $(function () {
@@ -203,7 +204,7 @@
 
                 for($i=0;$i<$predictionTime;$i++){
                     $casesPredictionPrevGrowth += (($casesPreviousPeriodGrowthPerDay))*($averageRepro*2);
-                    $casesPredictionPrevGrowth *=0.96;
+                    $casesPredictionPrevGrowth -= ($casesPreviousPeriodGrowthPerDay*$i)*0.05;
                     // $newDay = date('F j, Y', strtotime('+1 day', strtotime($mostRecentDate)));
                     $newDataPoint = new DataPoint();
                     $newDataPoint->Date = date('F j, Y', strtotime("+".($i+1)." day", strtotime($mostRecentData->Date)));

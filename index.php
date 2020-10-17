@@ -71,107 +71,34 @@
         </div><br />
         <div class="card">
             <div class="card-body">
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="listedStatsProvinces" role="tabpanel" aria-labelledby="listedStatsProvinces-tab">
-                        <div class="table-responsive-sm">
-                            <p><i class="fas fa-angle-double-right"></i> Netherlands</p>
-                            <table id="provinceNumbers" class="table table-hover table-sm sortable">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th class="th-sm" scope="col">Province</th>
-                                        <th class="th-sm" scope="col">Cases</th>
-                                        <th class="th-sm" scope="col">Deaths</th>
-                                        <th class="th-sm" scope="col">Hosp. Admissions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                        $regDate = 0;
-                                        $provinceID = 0;
-                                        foreach($provinceData as $province){
-                                            $dailyEvents = array_values($province->DailyEvents);
-                                            $regDate = $dailyEvents[0]->Date;
-                                            echo "<tr data-toggle=\"tab\" data-target=\"#listedStatsProvince_".$provinceID."\">";
-                                            echo "<td>".$province->RegionName."</td>";
-                                            echo "<td value=\"".$province->TotalCases."\">".$province->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
-                                            echo "<td>".$province->TotalDeaths." <small>".($dailyEvents[0]->ReportedDeaths!=0?AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true):"")."</small></td>";
-                                            echo "<td>".$province->TotalHospitalAdmissions." <small>".($dailyEvents[0]->ReportedHospitalAdmissions!=0?AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true):"")."</small></td>";
-                                            echo "</tr>";
-                                            $provinceID++;
-                                        }
-                                    ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <?php
-                        $provinceID = 0;
-                        foreach($provinceData as $province){
-                            $Municipalities = $province->Municipalities;
-                            ksort($Municipalities);
-                            $reversedDaily = $province->DailyEvents;
-                            $reversedDaily = array_reverse($reversedDaily);
-                            $reversedDaily = array_values($reversedDaily);
-                            $dailyValues = array_values($province->DailyEvents);
-                            echo "<div class=\"tab-pane fade\" id=\"listedStatsProvince_".$provinceID."\" role=\"tabpanel\" aria-labelledby=\"listedStatsProvince_".$provinceID."-tab\">
-                                    <p><i class=\"fas fa-angle-double-right\"></i> <a data-toggle=\"tab\" data-target=\"#listedStatsProvinces\">Netherlands</a> <i class=\"fas fa-angle-double-right\"></i> ".$province->RegionName."</p>
-                                    <div class=\"row\">
-                                        <div class=\"col\">
-                                            <p>Total Cases: ".number_format($province->TotalCases)." <small>".AdditionNumberString($dailyValues[0]->ReportedCases, true, true)."</small></p>
-                                            <p>Total Deaths: ".number_format($province->TotalDeaths)." <small>".AdditionNumberString($dailyValues[0]->ReportedDeaths, true, true)."</small></p>
-                                        </div>
-                                        <div class=\"col\">
-                                            <p>".number_format(PerValue($province->TotalCases,$provinceTable[$province->RegionName][1],1000))."/1,000 tested positive</p>
-                                            <p>".number_format(PerValue($province->TotalDeaths,$provinceTable[$province->RegionName][1],1000))."/1,000 died</p>
-                                        </div>
-                                    </div>
-                                    <div class=\"row\">
-                                        <div class=\"col-lg-6\">
-                                            <small>Total cases</small>
-                                            <canvas id=\"totalCasesProvince_".$provinceID."\"></canvas>
-                                        </div>
-                                        <div class=\"col-lg-6\">
-                                            <small>Total deaths</small>
-                                            <canvas id=\"totalDeathsProvince_".$provinceID."\"></canvas>
-                                        </div>
-                                    </div>
-                                    <table id=\"province_".$provinceID."_municipalityNumbers\" class=\"table table-hover table-sm sortable\">
-                                        <thead class=\"bg-light\">
-                                            <tr>
-                                                <th scope=\"col\">Municipality (".count($Municipalities).")</th>
-                                                <th scope=\"col\">Cases</th>
-                                                <th scope=\"col\">Deaths</th>
-                                                <th scope=\"col\">Hosp. Admissions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>";
-                                            foreach($Municipalities as $municipality){
-                                                $inRandstad = in_array($municipality->RegionName,$regions["Randstad"]);
-                                                $isCapital = $municipality->RegionName==$provinceTable[$province->RegionName][2];
-                                                $dailyEvents = array_values($municipality->DailyEvents);
-                                                $icons = "";
-                                                if($inRandstad){
-                                                    $icons.="<i class=\"fas fa-city material-tooltip-main\" data-toggle=\"tooltip\" title=\"Randstad\"></i> ";
-                                                }
-                                                if($isCapital){
-                                                    $icons.="<i class=\"fas fa-crown material-tooltip-main\" data-toggle=\"tooltip\" title=\"Province capital\"></i>";
-                                                }
-                                                echo "<tr>";
-                                                echo "<td class=\"d-flex justify-content-between align-items-center\">".$municipality->RegionName." <small>".$icons."</small></td>";
-                                                echo "<td>".$municipality->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
-                                                echo "<td>".$municipality->TotalDeaths." <small>".($dailyEvents[0]->ReportedDeaths!=0?AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true):"")."</small></td>";
-                                                echo "<td>".$municipality->TotalHospitalAdmissions." <small>".($dailyEvents[0]->ReportedHospitalAdmissions!=0?AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true):"")."</small></td>";
-                                                echo "</tr>";
-                                            }
-                                        echo "</tbody>
-                                    </table>
-                                    <br />
-                                    <p>Legend</p>
-                                    <p><small><i class=\"fas fa-crown\"></i> Province capital, <i class=\"fas fa-city\"></i> Randstad</small></p>
-                                </div>";
-                            $provinceID++;
-                        }
-                    ?>
+                <div class="table-responsive-sm">
+                    <table id="provinceNumbers" class="table table-hover table-sm sortable">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="th-sm" scope="col">Province</th>
+                                <th class="th-sm" scope="col">Cases</th>
+                                <th class="th-sm" scope="col">Deaths</th>
+                                <th class="th-sm" scope="col">Hosp. Admissions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                                $regDate = 0;
+                                $provinceID = 0;
+                                foreach($provinceData as $province){
+                                    $dailyEvents = array_values($province->DailyEvents);
+                                    $regDate = $dailyEvents[0]->Date;
+                                    echo "<tr data-toggle=\"modal\" data-target=\"#listedStatsProvince_".$provinceID."\">";
+                                    echo "<td>".$province->RegionName."</td>";
+                                    echo "<td value=\"".$province->TotalCases."\">".$province->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
+                                    echo "<td>".$province->TotalDeaths." <small>".($dailyEvents[0]->ReportedDeaths!=0?AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true):"")."</small></td>";
+                                    echo "<td>".$province->TotalHospitalAdmissions." <small>".($dailyEvents[0]->ReportedHospitalAdmissions!=0?AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true):"")."</small></td>";
+                                    echo "</tr>";
+                                    $provinceID++;
+                                }
+                            ?>
+                        </tbody>
+                    </table>
                 </div>
                 <small>These are cumulative numbers. Fired patients or recovered people are not reported.</small>
                 <small>Click on a province to view more detailed information.</small>
@@ -194,6 +121,74 @@
         $reversedDaily = $province->DailyEvents;
         $reversedDaily = array_reverse($reversedDaily);
         $reversedDaily = array_values($reversedDaily);
+        $Municipalities = $province->Municipalities;
+        echo "<div class=\"modal fade\" id=\"listedStatsProvince_".$provinceID."\" role=\"dialog\" aria-labelledby=\"listedStatsProvince_".$provinceID."-tab\">
+                <div class=\"modal-dialog modal-lg\" role=\"document\">
+                    <div class=\"modal-content\">
+                        <div class=\"modal-header\">
+                            <h4 class=\"modal-title w-100\" id=\"listedStatsProvince_".$provinceID."-tab\">".$province->RegionName." <small>".number_format($provinceTable[$province->RegionName][1])." inhabitants</small></h4>
+                            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">
+                            <span aria-hidden=\"true\">&times;</span>
+                            </button>
+                        </div>
+                        <div class=\"modal-body\">
+                            <div class=\"row\">
+                                <div class=\"col\">
+                                    <p>Total Cases: ".number_format($province->TotalCases)." <small>".AdditionNumberString($reversedDaily[count($reversedDaily)-1]->ReportedCases, true, true)."</small></p>
+                                    <p>Total Deaths: ".number_format($province->TotalDeaths)." <small>".AdditionNumberString($reversedDaily[count($reversedDaily)-1]->ReportedDeaths, true, true)."</small></p>
+                                </div>
+                                <div class=\"col\">
+                                    <p>".number_format(PerValue($province->TotalCases,$provinceTable[$province->RegionName][1],1000))."/1,000 tested positive</p>
+                                    <p>".number_format(PerValue($province->TotalDeaths,$provinceTable[$province->RegionName][1],1000))."/1,000 died</p>
+                                </div>
+                            </div>
+                            <div class=\"row\">
+                                <div class=\"col-lg-6\">
+                                    <small>Total cases</small>
+                                    <canvas id=\"totalCasesProvince_".$provinceID."\"></canvas>
+                                </div>
+                                <div class=\"col-lg-6\">
+                                    <small>Total deaths</small>
+                                    <canvas id=\"totalDeathsProvince_".$provinceID."\"></canvas>
+                                </div>
+                            </div>
+                            <table id=\"province_".$provinceID."_municipalityNumbers\" class=\"table table-hover table-sm sortable\">
+                                <thead class=\"bg-light\">
+                                    <tr>
+                                        <th scope=\"col\">Municipality (".count($Municipalities).")</th>
+                                        <th scope=\"col\">Cases</th>
+                                        <th scope=\"col\">Deaths</th>
+                                        <th scope=\"col\">Hosp. Admissions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>";
+                                    foreach($Municipalities as $municipality){
+                                        $inRandstad = in_array($municipality->RegionName,$regions["Randstad"]);
+                                        $isCapital = $municipality->RegionName==$provinceTable[$province->RegionName][2];
+                                        $dailyEvents = array_values($municipality->DailyEvents);
+                                        $icons = "";
+                                        if($inRandstad){
+                                            $icons.="<i class=\"fas fa-city material-tooltip-main\" data-toggle=\"tooltip\" title=\"Randstad\"></i> ";
+                                        }
+                                        if($isCapital){
+                                            $icons.="<i class=\"fas fa-crown material-tooltip-main\" data-toggle=\"tooltip\" title=\"Province capital\"></i>";
+                                        }
+                                        echo "<tr>";
+                                        echo "<td class=\"d-flex justify-content-between align-items-center\">".$municipality->RegionName." <small>".$icons."</small></td>";
+                                        echo "<td>".$municipality->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
+                                        echo "<td>".$municipality->TotalDeaths." <small>".($dailyEvents[0]->ReportedDeaths!=0?AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true):"")."</small></td>";
+                                        echo "<td>".$municipality->TotalHospitalAdmissions." <small>".($dailyEvents[0]->ReportedHospitalAdmissions!=0?AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true):"")."</small></td>";
+                                        echo "</tr>";
+                                    }
+                                echo "</tbody>
+                            </table>
+                            <br />
+                            <p>Legend</p>
+                            <p><small><i class=\"fas fa-crown\"></i> Province capital, <i class=\"fas fa-city\"></i> Randstad</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>";
         echo "<script>
                 new Chart(
                     document.getElementById(\"totalCasesProvince_".$provinceID."\"),{

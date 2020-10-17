@@ -70,7 +70,6 @@
         <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"></script>
 
-        <script src="js/scripts.js"></script>
     </head>
     <body>
         <div class="container">
