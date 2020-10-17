@@ -242,7 +242,7 @@
                             "label": "Prediction",
                             pointHitRadius: 20,
                             "fill": false,
-                            "borderColor": "#4287f5",
+                            "borderColor": "#bababa",
                             "pointBackgroundColor": "#4287f5",
                             "data": casePrediction,
                             "hidden":true
