@@ -26,6 +26,20 @@ $regions = [
     "Schiedam","Hoorn","Vlaardingen","Gouda"]
 ];
 
+function ColorHeat($rgbHot, $rgbCold, $low, $high, $value){
+    $t = ($value-$low)/($high-$low);
+    $t = sin($t*pi()*0.5);
+    $r = Lerp($rgbHot[0], $rgbCold[0], $t);
+    $g = Lerp($rgbHot[1], $rgbCold[1], $t);
+    $b = Lerp($rgbHot[2], $rgbCold[2], $t);
+
+    return array(round($r),round($g),round($b));
+}
+
+function Lerp($a, $b, $t){
+    return $a*(1-$t)+$b*$t;
+}
+
 //Adds an arrow up, down or a straight line if number is negative/positive,
 //used for additions/subtractions on cases etc
 function AdditionNumberString($val, $positiveIsBad = true, $formatNumber = false){

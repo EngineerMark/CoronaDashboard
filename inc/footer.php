@@ -193,17 +193,21 @@
                 $casesPreviousPeriodTotalGrowth = 0;
                 $casesPreviousPeriodGrowthPerDay = 0;
                 
-                for($i=0;$i<31;$i++){
+                for($i=0;$i<5;$i++){
                     $diff = $dataPointsNationwideValuesReversed[$i]->ReportedCases-$dataPointsNationwideValuesReversed[$i+1]->ReportedCases;
                     $casesPreviousPeriodTotalGrowth+=$diff;
                 }
-                $casesPreviousPeriodGrowthPerDay = $casesPreviousPeriodTotalGrowth/31;
+                $casesPreviousPeriodTotalGrowth /= 5;
+                $casesPreviousPeriodGrowthPerDay = $casesPreviousPeriodTotalGrowth;
 
                 $casesPredictionPrevGrowth = $mostRecentData->ReportedCases;
 
                 for($i=0;$i<$predictionTime;$i++){
+                    // $curve = pow(31,(-($i/1000)));
                     $casesPredictionPrevGrowth += (($casesPreviousPeriodGrowthPerDay))*($averageRepro*2);
-                    $casesPredictionPrevGrowth -= ($casesPreviousPeriodGrowthPerDay*$i)*0.05;
+                    // $casesPredictionPrevGrowth *= 0.95;
+                    $casesPredictionPrevGrowth -= ($casesPreviousPeriodGrowthPerDay*$i)*0.1;
+                    // $casesPredictionPrevGrowth *= ($curve);
                     // $newDay = date('F j, Y', strtotime('+1 day', strtotime($mostRecentDate)));
                     $newDataPoint = new DataPoint();
                     $newDataPoint->Date = date('F j, Y', strtotime("+".($i+1)." day", strtotime($mostRecentData->Date)));

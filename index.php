@@ -85,14 +85,44 @@
                             <?php
                                 $regDate = 0;
                                 $provinceID = 0;
+                                $heatMap = [];
+                                $heatMap["cases"] = [];
+                                $heatMap["cases"]["hot"] = [255, 74, 74];
+                                $heatMap["cases"]["cold"] = [255, 255, 255];
+                                $heatMap["cases"]["high"] = 0;
+
+                                $heatMap["deaths"] = [];
+                                $heatMap["deaths"]["hot"] = [82, 82, 82];
+                                $heatMap["deaths"]["cold"] = [255, 255, 255];
+                                $heatMap["deaths"]["high"] = 0;
+
+                                $heatMap["hospital"] = [];
+                                $heatMap["hospital"]["hot"] = [196, 143, 0];
+                                $heatMap["hospital"]["cold"] = [255, 255, 255];
+                                $heatMap["hospital"]["high"] = 0;
+
+                                foreach($provinceData as $province){
+                                    if(intval($province->TotalCases)>$heatMap["cases"]["high"]){
+                                        $heatMap["cases"]["high"] = $province->TotalCases;
+                                    }
+                                    if(intval($province->TotalDeaths)>$heatMap["deaths"]["high"]){
+                                        $heatMap["deaths"]["high"] = $province->TotalDeaths;
+                                    }
+                                    if(intval($province->TotalHospitalAdmissions)>$heatMap["hospital"]["high"]){
+                                        $heatMap["hospital"]["high"] = $province->TotalHospitalAdmissions;
+                                    }
+                                }
                                 foreach($provinceData as $province){
                                     $dailyEvents = array_values($province->DailyEvents);
                                     $regDate = $dailyEvents[0]->Date;
+                                    $heatmapCases = ColorHeat($heatMap["cases"]["cold"],$heatMap["cases"]["hot"], 0, $heatMap["cases"]["high"], intval($province->TotalCases));
+                                    $heatmapDeaths = ColorHeat($heatMap["deaths"]["cold"],$heatMap["deaths"]["hot"], 0, $heatMap["deaths"]["high"], intval($province->TotalDeaths));
+                                    $heatmapHospital = ColorHeat($heatMap["hospital"]["cold"],$heatMap["hospital"]["hot"], 0, $heatMap["hospital"]["high"], intval($province->TotalHospitalAdmissions));
                                     echo "<tr data-toggle=\"modal\" data-target=\"#listedStatsProvince_".$provinceID."\">";
                                     echo "<td>".$province->RegionName."</td>";
-                                    echo "<td value=\"".$province->TotalCases."\">".$province->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
-                                    echo "<td>".$province->TotalDeaths." <small>".($dailyEvents[0]->ReportedDeaths!=0?AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true):"")."</small></td>";
-                                    echo "<td>".$province->TotalHospitalAdmissions." <small>".($dailyEvents[0]->ReportedHospitalAdmissions!=0?AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true):"")."</small></td>";
+                                    echo "<td style=\"border-left: 5px solid rgb(".$heatmapCases[0].",".$heatmapCases[1].",".$heatmapCases[2].")\" value=\"".$province->TotalCases."\">".$province->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
+                                    echo "<td style=\"border-left: 5px solid rgb(".$heatmapDeaths[0].",".$heatmapDeaths[1].",".$heatmapDeaths[2].")\">".$province->TotalDeaths." <small>".($dailyEvents[0]->ReportedDeaths!=0?AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true):"")."</small></td>";
+                                    echo "<td style=\"border-left: 5px solid rgb(".$heatmapHospital[0].",".$heatmapHospital[1].",".$heatmapHospital[2].")\">".$province->TotalHospitalAdmissions." <small>".($dailyEvents[0]->ReportedHospitalAdmissions!=0?AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true):"")."</small></td>";
                                     echo "</tr>";
                                     $provinceID++;
                                 }
@@ -121,7 +151,9 @@
         $reversedDaily = $province->DailyEvents;
         $reversedDaily = array_reverse($reversedDaily);
         $reversedDaily = array_values($reversedDaily);
-        $Municipalities = $province->Municipalities;
+        $heatMap["cases"]["high"] = 0;
+        $heatMap["deaths"]["high"] = 0;
+        $heatMap["hospital"]["high"] = 0;
         echo "<div class=\"modal fade\" id=\"listedStatsProvince_".$provinceID."\" role=\"dialog\" aria-labelledby=\"listedStatsProvince_".$provinceID."-tab\">
                 <div class=\"modal-dialog modal-lg\" role=\"document\">
                     <div class=\"modal-content\">
@@ -163,23 +195,37 @@
                                 </thead>
                                 <tbody>";
                                     foreach($Municipalities as $municipality){
+                                        if(intval($municipality->TotalCases)>$heatMap["cases"]["high"]){
+                                            $heatMap["cases"]["high"] = $municipality->TotalCases;
+                                        }
+                                        if(intval($municipality->TotalDeaths)>$heatMap["deaths"]["high"]){
+                                            $heatMap["deaths"]["high"] = $municipality->TotalDeaths;
+                                        }
+                                        if(intval($municipality->TotalHospitalAdmissions)>$heatMap["hospital"]["high"]){
+                                            $heatMap["hospital"]["high"] = $municipality->TotalHospitalAdmissions;
+                                        }
+                                    }
+                                    foreach($Municipalities as $municipality){
                                         $inRandstad = in_array($municipality->RegionName,$regions["Randstad"]);
                                         $isCapital = $municipality->RegionName==$provinceTable[$province->RegionName][2];
                                         $dailyEvents = array_values($municipality->DailyEvents);
                                         $icons = "";
+                                        $heatmapCases = ColorHeat($heatMap["cases"]["cold"],$heatMap["cases"]["hot"], 0, $heatMap["cases"]["high"], intval($municipality->TotalCases));
+                                        $heatmapDeaths = ColorHeat($heatMap["deaths"]["cold"],$heatMap["deaths"]["hot"], 0, $heatMap["deaths"]["high"], intval($municipality->TotalDeaths));
+                                        $heatmapHospital = ColorHeat($heatMap["hospital"]["cold"],$heatMap["hospital"]["hot"], 0, $heatMap["hospital"]["high"], intval($municipality->TotalHospitalAdmissions));
                                         if($inRandstad){
-                                            $icons.="<i class=\"fas fa-city material-tooltip-main\" data-toggle=\"tooltip\" title=\"Randstad\"></i> ";
+                                                $icons.="<i class=\"fas fa-city material-tooltip-main\" data-toggle=\"tooltip\" title=\"Randstad\"></i> ";
+                                            }
+                                            if($isCapital){
+                                                $icons.="<i class=\"fas fa-crown material-tooltip-main\" data-toggle=\"tooltip\" title=\"Province capital\"></i>";
+                                            }
+                                            echo "<tr>";
+                                            echo "<td class=\"d-flex justify-content-between align-items-center\">".$municipality->RegionName." <small>".$icons."</small></td>";
+                                            echo "<td style=\"border-left: 5px solid rgb(".$heatmapCases[0].",".$heatmapCases[1].",".$heatmapCases[2].")\">".$municipality->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
+                                            echo "<td style=\"border-left: 5px solid rgb(".$heatmapDeaths[0].",".$heatmapDeaths[1].",".$heatmapDeaths[2].")\">".$municipality->TotalDeaths." <small>".($dailyEvents[0]->ReportedDeaths!=0?AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true):"")."</small></td>";
+                                            echo "<td style=\"border-left: 5px solid rgb(".$heatmapHospital[0].",".$heatmapHospital[1].",".$heatmapHospital[2].")\">".$municipality->TotalHospitalAdmissions." <small>".($dailyEvents[0]->ReportedHospitalAdmissions!=0?AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true):"")."</small></td>";
+                                            echo "</tr>";
                                         }
-                                        if($isCapital){
-                                            $icons.="<i class=\"fas fa-crown material-tooltip-main\" data-toggle=\"tooltip\" title=\"Province capital\"></i>";
-                                        }
-                                        echo "<tr>";
-                                        echo "<td class=\"d-flex justify-content-between align-items-center\">".$municipality->RegionName." <small>".$icons."</small></td>";
-                                        echo "<td>".$municipality->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
-                                        echo "<td>".$municipality->TotalDeaths." <small>".($dailyEvents[0]->ReportedDeaths!=0?AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true):"")."</small></td>";
-                                        echo "<td>".$municipality->TotalHospitalAdmissions." <small>".($dailyEvents[0]->ReportedHospitalAdmissions!=0?AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true):"")."</small></td>";
-                                        echo "</tr>";
-                                    }
                                 echo "</tbody>
                             </table>
                             <br />
@@ -197,6 +243,7 @@
                             \"labels\": ["; foreach($reversedDaily as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo"],
                             \"datasets\":[{
                                 pointHitRadius: 20,
+                                \"Cases\": \"Deaths\",
                                 \"fill\": false,
                                 \"borderColor\": \"#eba834\",
                                 \"pointBackgroundColor\": \"#eba834\",
@@ -235,7 +282,6 @@
                                     }
                                 }],
                                 \"yAxes\": [{
-                                    \"id\": 'left-y-axis',
                                     \"gridLines\": {
                                         \"drawBorder\": false
                                     },
@@ -250,19 +296,18 @@
                                             ];
                                             function formatNumber(n) {
                                                 for (var i = 0; i < ranges.length; i++) {
-                                                if (n >= ranges[i].divider) {
-                                                    return (n / ranges[i].divider).toString() + ranges[i].suffix;
-                                                }
+                                                    if (n >= ranges[i].divider) {
+                                                        return (n / ranges[i].divider).toString() + ranges[i].suffix;
+                                                    }
                                                 }
                                                 return n;
                                             }
                                             return formatNumber(value);
                                         }
                                     },
-                                    \"position\": 'left'
                                 }]
                             }
-                        },
+                        }
                     }
                 );
                 new Chart(
@@ -272,10 +317,11 @@
                             \"labels\": ["; foreach($reversedDaily as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo"],
                             \"datasets\":[{
                                 pointHitRadius: 20,
+                                \"label\": \"Deaths\",
                                 \"fill\": false,
                                 \"borderColor\": \"#eba834\",
                                 \"pointBackgroundColor\": \"#eba834\",
-                                \"data\": ["; $cumulativeDeathsBuffer = 0; foreach($reversedDaily as $_value){ $cumulativeDeathsBuffer+=(isset($_value->ReportedCases)?$_value->ReportedDeaths:0); echo $cumulativeDeathsBuffer.",";} echo "]
+                                \"data\": ["; $cumulativeDeathsBuffer = 0; foreach($reversedDaily as $_value){ $cumulativeDeathsBuffer+=(isset($_value->ReportedDeaths)?$_value->ReportedDeaths:0); echo $cumulativeDeathsBuffer.",";} echo "]
                             }]
                         },
                         \"options\":{
@@ -310,7 +356,6 @@
                                     }
                                 }],
                                 \"yAxes\": [{
-                                    \"id\": 'left-y-axis',
                                     \"gridLines\": {
                                         \"drawBorder\": false
                                     },
@@ -334,7 +379,6 @@
                                             return formatNumber(value);
                                         }
                                     },
-                                    \"position\": 'left'
                                 }]
                             }
                         },
