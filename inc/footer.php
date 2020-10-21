@@ -56,6 +56,7 @@
             </div>
         </div>
         <script src="js/scripts.js"></script>
+        <script src="js/charts.js"></script>
         <script>
             $(document).ready(function() { $('body').bootstrapMaterialDesign(); });
             $(function () {
@@ -64,71 +65,14 @@
         </script>
         <!-- Charts Code -->
         <script>
-            // Reproductionvalue chart
-            new Chart(
-                document.getElementById("reproGraph"),{
-                    "type":"line",
-                    "data":{
-                        "labels":[<?php foreach($reproDataReverse as $reproVal){ echo "\"".date("F j, Y",strtotime($reproVal["Date"]))."\",";} ?>],
-                        "datasets":[
-                            {
-                                "label":"R low",
-                                // "data":[65,59,80,81,56,55,40],
-                                "data":[<?php foreach($reproDataReverse as $reproVal){ echo $reproVal["Rt_low"].",";} ?>],
-                                "fill":"+1",
-                                "borderColor":"rgba(75, 192, 192, 0)",
-                                "lineTension":0.1,
-                                "pointRadius": 0,
-                            },
-                            {
-                                "label":"R high",
-                                // "data":[65,59,80,81,56,55,40],
-                                "data":[<?php foreach($reproDataReverse as $reproVal){ echo $reproVal["Rt_up"].",";} ?>],
-                                "fill":false,
-                                "borderColor":"rgba(75, 192, 192, 0)",
-                                "lineTension":0.1,
-                                "pointRadius": 0,
-                            },
-                            {
-                                "label":"R avg",
-                                // "data":[65,59,80,81,56,55,40],
-                                "data":[<?php foreach($reproDataReverse as $reproVal){ echo (isset($reproVal["Rt_avg"])?$reproVal["Rt_avg"]:"").",";} ?>],
-                                "fill":false,
-                                "borderColor":"rgb(50, 168, 82)",
-                                "lineTension":0.1,
-                                "pointRadius": 0,
-                            },
-                        ]
-                    },
-                    "options":{
-                        "tooltips": {
-                            "intersect": false,
-                            "custom": function(tooltip) {
-                                if (!tooltip) return;
-                                // disable displaying the color box;
-                                tooltip.displayColors = false;
-                            }
-                        },
-                        "legend": {
-                            "display": false
-                        },
-                        "scales": {
-                            "xAxes": [{
-                                "gridLines": {
-                                    "display": false,
-                                },
-                                "ticks": {
-                                    "autoskip": true,
-                                    "autoSkipPadding": 30,
-                                }
-                            }]
-                        }
-                    }
-                }
-            );
-
-
             <?php
+                //Reproductionchart
+                echo "reproductionChart.data.labels = ["; foreach($reproDataReverse as $reproVal){ echo "\"".date("F j, Y",strtotime($reproVal["Date"]))."\",";} echo "];";
+                echo "reproductionChart.data.datasets[0].data = ["; foreach($reproDataReverse as $reproVal){ echo $reproVal["Rt_low"].",";} echo "];";
+                echo "reproductionChart.data.datasets[1].data = ["; foreach($reproDataReverse as $reproVal){ echo $reproVal["Rt_up"].",";} echo "];";
+                echo "reproductionChart.data.datasets[2].data = ["; foreach($reproDataReverse as $reproVal){ echo (isset($reproVal["Rt_avg"])?$reproVal["Rt_avg"]:"").",";} echo "];";
+                echo "reproductionChart.update();";
+
                 $dataPointsNationwideValues = array_values($dataPointsNationwide);
                 $dataPointsNationwideValuesReversed = array_reverse($dataPointsNationwideValues);
                 $dataPointsNationwideNew = $dataPointsNationwideValues;
@@ -144,7 +88,8 @@
                 echo "var newCasesDatesRecent = ["; foreach($dataPointsNationwideNew as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
                 echo "var newDeathsDatesTotal = ["; foreach($dataPointsNationwideValues as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
                 echo "var newDeathsDatesRecent = ["; foreach($dataPointsNationwideNew as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
-                
+
+
                 echo "var newCasesWeekAverage = [";
                 $i = 0;
                 foreach($dataPointsNationwideValues as $_dates){
@@ -243,209 +188,23 @@
                 echo "var dataPointsNationwidePrediction = ["; foreach($dataPointsNationwidePrediction as $_dates){ echo "\"".date("F j, Y",strtotime($_dates->Date))."\",";} echo "];";
                 echo "var casePrediction = ["; foreach($dataPointsNationwidePrediction as $_value){ echo (isset($_value->ReportedCases)?$_value->ReportedCases:"").",";} echo "];";
                 echo "var deathPrediction = ["; foreach($dataPointsNationwidePrediction as $_value){ echo (isset($_value->ReportedDeaths)?$_value->ReportedDeaths:"").",";} echo "];";
-                ?>
-            // New cases chart
-            var newCaseChart = new Chart(
-                document.getElementById("caseChart"),{
-                    "type":"LineWithLine",
-                    "data":{
-                        "labels": newCasesDatesTotal,
-                        "datasets":[{
-                            "label": "New cases",
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#eba834",
-                            "pointBackgroundColor": "#eba834",
-                            "data": newCasesTotal
-                        },{
-                            "label": "Week average",
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#4287f5",
-                            "pointBackgroundColor": "#4287f5",
-                            "data": newCasesWeekAverage
-                        },
-                        {
-                            "label": "Prediction",
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#bababa",
-                            "pointBackgroundColor": "#4287f5",
-                            "data": casePrediction,
-                            "hidden":true
-                        },{
-                            "label": "Week average (Recent)",
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#4287f5",
-                            "pointBackgroundColor": "#4287f5",
-                            "data": newCasesWeekAverageRecent,
-                            "hidden":true
-                        },]
-                    },
-                    "options":{
-                        "responsive": true,
-                        "legend": {
-                            "display": false
-                        },
-                        "tooltips": {
-                            "intersect": false,
-                            "custom": function(tooltip) {
-                                if (!tooltip) return;
-                                // disable displaying the color box;
-                                tooltip.displayColors = false;
-                            }
-                        },
-                        "elements": {
-                            "line": {
-                                "tension": 0.0
-                            },
-                            "point":{
-                                "radius": 0
-                            }
-                        },
-                        "scales": {
-                            "xAxes": [{
-                                "gridLines": {
-                                    "display": false,
-                                },
-                                "ticks": {
-                                    "autoskip": true,
-                                    "autoSkipPadding": 30,
-                                }
-                            }],
-                            "yAxes": [{
-                                "id": 'left-y-axis',
-                                "gridLines": {
-                                    "drawBorder": false
-                                },
-                                type: 'linear',
-                                "ticks": {
-                                    "maxTicksLimit": 5,
-                                    "padding": 15,
-                                    "callback": function(value) {
-                                        var ranges = [
-                                            { divider: 1e6, suffix: 'M' },
-                                            { divider: 1e3, suffix: 'k' }
-                                        ];
-                                        function formatNumber(n) {
-                                            for (var i = 0; i < ranges.length; i++) {
-                                            if (n >= ranges[i].divider) {
-                                                return (n / ranges[i].divider).toString() + ranges[i].suffix;
-                                            }
-                                            }
-                                            return n;
-                                        }
-                                        return formatNumber(value);
-                                    }
-                                },
-                                "position": 'left'
-                            }]
-                        }
-                    },
-                }
-            );
 
-            // New deaths chart
-            var newDeathChart = new Chart(
-                document.getElementById("deathChart"),{
-                    "type":"LineWithLine",
-                    "data":{
-                        "labels": newDeathsDatesTotal,
-                        "datasets":[{
-                            "label":"New deaths",
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#eb4034",
-                            "pointBackgroundColor": "#eb4034",
-                            "data": newDeathsTotal
-                        },{
-                            "label": "Week average",
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#4287f5",
-                            "pointBackgroundColor": "#4287f5",
-                            "data": newDeathsWeekAverage
-                        },
-                        {
-                            "label": "Prediction",
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#4287f5",
-                            "pointBackgroundColor": "#4287f5",
-                            "data": deathPrediction,
-                            "hidden":true
-                        },{
-                            "label": "Week average (Recent)",
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#4287f5",
-                            "pointBackgroundColor": "#4287f5",
-                            "data": newDeathsWeekAverageRecent,
-                            "hidden":true
-                        },]
-                    },
-                    "options":{
-                        "responsive": true,
-                        "legend": {
-                            "display": false
-                        },
-                        "tooltips": {
-                            "intersect": false,
-                            "custom": function(tooltip) {
-                                if (!tooltip) return;
-                                // disable displaying the color box;
-                                tooltip.displayColors = false;
-                            }
-                        },
-                        "elements": {
-                            "line": {
-                                "tension": 0.0
-                            },
-                            "point":{
-                                "radius": 0
-                            }
-                        },
-                        "scales": {
-                            "xAxes": [{
-                                "gridLines": {
-                                    "display": false,
-                                },
-                                "ticks": {
-                                    "autoskip": true,
-                                    "autoSkipPadding": 30,
-                                }
-                            }],
-                            "yAxes": [{
-                                "gridLines": {
-                                    "drawBorder": false
-                                },
-                                "ticks": {
-                                    "maxTicksLimit": 5,
-                                    "padding": 15,
-                                    "callback": function(value) {
-                                        var ranges = [
-                                            { divider: 1e6, suffix: 'M' },
-                                            { divider: 1e3, suffix: 'k' }
-                                        ];
-                                        function formatNumber(n) {
-                                            for (var i = 0; i < ranges.length; i++) {
-                                            if (n >= ranges[i].divider) {
-                                                return (n / ranges[i].divider).toString() + ranges[i].suffix;
-                                            }
-                                            }
-                                            return n;
-                                        }
-                                        return formatNumber(value);
-                                    }
-                                }
-                            }]
-                        }
-                    },
-                }
-            );
+                echo "newCaseChart.data.labels = newCasesDatesTotal;";
+                echo "newCaseChart.data.datasets[0].data = newCasesTotal;";
+                echo "newCaseChart.data.datasets[1].data = newCasesWeekAverage;";
+                echo "newCaseChart.data.datasets[2].data = casePrediction;";
+                echo "newCaseChart.data.datasets[3].data = newCasesWeekAverageRecent;";
+                echo "newCaseChart.update();";
 
-            $('#caseDeathPairShowRecent').click(function () {
+                echo "newDeathChart.data.labels = newDeathsDatesTotal;";
+                echo "newDeathChart.data.datasets[0].data = newDeathsTotal;";
+                echo "newDeathChart.data.datasets[1].data = newDeathsWeekAverage;";
+                echo "newDeathChart.data.datasets[2].data = deathPrediction;";
+                echo "newDeathChart.data.datasets[3].data = newDeathsWeekAverageRecent;";
+                echo "newDeathChart.update();";
+            ?>
+
+            function ChartDisplayRecent(){
                 newCaseChart.data.datasets[0].data = newCasesRecent;
                 newCaseChart.data.datasets[1].hidden = true;
                 newCaseChart.data.datasets[2].hidden = true;
@@ -459,9 +218,9 @@
                 newDeathChart.data.datasets[3].hidden = false;
                 newDeathChart.data.labels = newDeathsDatesRecent;
                 newDeathChart.update();
-            });
+            }
 
-            $('#caseDeathPairShowAll').click(function () {
+            function ChartDisplayAll(){
                 newCaseChart.data.datasets[0].data = newCasesTotal;
                 newCaseChart.data.datasets[1].hidden = false;
                 newCaseChart.data.datasets[2].hidden = true;
@@ -475,271 +234,34 @@
                 newDeathChart.data.datasets[3].hidden = true;
                 newDeathChart.data.labels = newDeathsDatesTotal;
                 newDeathChart.update();
-            });
+            }
 
-            $('#caseDeathPairShowPrediction').click(function () {
+            function ChartDisplayPrediction(){
                 newCaseChart.data.datasets[0].data = newCasesTotal;
                 newCaseChart.data.datasets[1].hidden = true;
                 newCaseChart.data.datasets[2].hidden = false;
                 newCaseChart.data.datasets[3].hidden = true;
                 newCaseChart.data.labels = dataPointsNationwidePrediction;
                 newCaseChart.update();
+            }
 
-                // newDeathChart.data.datasets[3].hidden = true;
-                // newDeathChart.update();
+            $('#caseDeathPairShowRecent').click(function(){ChartDisplayRecent()});
+            $('#caseDeathPairShowAll').click(function(){ChartDisplayAll()});
+            $('#caseDeathPairShowPrediction').click(function(){ChartDisplayPrediction()});
 
-                // newDeathChart.data.datasets[0].data = newDeathsTotal;
-                // newDeathChart.data.datasets[1].hidden = true;
-                // newDeathChart.data.datasets[2].hidden = false;
-                // newDeathChart.data.labels = dataPointsNationwidePrediction;
-                // newDeathChart.update();
-            });
+            headerTotalCasesChart.data.labels = [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".date("M j Y",strtotime($_dates->Date))."\",";} ?>];
+            headerTotalCasesChart.data.datasets[0].data = [<?php $cumulativeCasesBuffer = 0; foreach($dataPointsNationwide as $_value){ $cumulativeCasesBuffer+=(isset($_value->ReportedCases)?$_value->ReportedCases:0); echo $cumulativeCasesBuffer.",";} ?>];
+            headerTotalCasesChart.update();
 
-            // Header Total cases chart
-            new Chart(
-                document.getElementById("headerTotalCasesChart"),{
-                    "type":"LineWithLine",
-                    "data":{
-                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".date("M j Y",strtotime($_dates->Date))."\",";} ?>],
-                        "datasets":[{
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#eba834",
-                            "pointBackgroundColor": "#eba834",
-                            "data": [<?php $cumulativeCasesBuffer = 0; foreach($dataPointsNationwide as $_value){ $cumulativeCasesBuffer+=(isset($_value->ReportedCases)?$_value->ReportedCases:0); echo $cumulativeCasesBuffer.",";} ?>]
-                        }]
-                    },
-                    "options":{
-                        "responsive": true,
-                        "legend": {
-                            "display": false
-                        },
-                        "tooltips": {
-                            "intersect": false,
-                            "custom": function(tooltip) {
-                                if (!tooltip) return;
-                                // disable displaying the color box;
-                                tooltip.displayColors = false;
-                            }
-                        },
-                        "elements": {
-                            "line": {
-                                "tension": 0.5
-                            },
-                            "point":{
-                                "radius": 0
-                            }
-                        },
-                        "scales": {
-                            "xAxes": [{
-                                "gridLines": {
-                                    "display": false,
-                                },
-                                "ticks": {
-                                    "autoskip": true,
-                                    "autoSkipPadding": 30,
-                                }
-                            }],
-                            "yAxes": [{
-                                "id": 'left-y-axis',
-                                "gridLines": {
-                                    "drawBorder": false
-                                },
-                                type: 'linear',
-                                "ticks": {
-                                    "maxTicksLimit": 5,
-                                    "padding": 15,
-                                    "callback": function(value) {
-                                        var ranges = [
-                                            { divider: 1e6, suffix: 'M' },
-                                            { divider: 1e3, suffix: 'k' }
-                                        ];
-                                        function formatNumber(n) {
-                                            for (var i = 0; i < ranges.length; i++) {
-                                            if (n >= ranges[i].divider) {
-                                                return (n / ranges[i].divider).toString() + ranges[i].suffix;
-                                            }
-                                            }
-                                            return n;
-                                        }
-                                        return formatNumber(value);
-                                    }
-                                },
-                                "position": 'left'
-                            }]
-                        }
-                    },
-                }
-            );
+            headerTotalDeathsChart.data.labels = [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".date("M j Y",strtotime($_dates->Date))."\",";} ?>];
+            headerTotalDeathsChart.data.datasets[0].data = [<?php $cumulativeDeathsBuffer = 0; foreach($dataPointsNationwide as $_value){ $cumulativeDeathsBuffer+=(isset($_value->ReportedDeaths)?$_value->ReportedDeaths:0); echo $cumulativeDeathsBuffer.",";} ?>];
+            headerTotalDeathsChart.update();
 
-            // Header Total deaths chart
-            new Chart(
-                document.getElementById("headerTotalDeathsChart"),{
-                    "type":"LineWithLine",
-                    "data":{
-                        "labels": [<?php foreach($dataPointsNationwide as $_dates){ echo "\"".date("M j Y",strtotime($_dates->Date))."\",";} ?>],
-                        "datasets":[{
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#eb4034",
-                            "pointBackgroundColor": "#eb4034",
-                            "data": [<?php $cumulativeDeathsBuffer = 0; foreach($dataPointsNationwide as $_value){ $cumulativeDeathsBuffer+=(isset($_value->ReportedDeaths)?$_value->ReportedDeaths:0); echo $cumulativeDeathsBuffer.",";} ?>]
-                        }]
-                    },
-                    "options":{
-                        "responsive": true,
-                        "legend": {
-                            "display": false
-                        },
-                        "tooltips": {
-                            "intersect": false,
-                            "custom": function(tooltip) {
-                                if (!tooltip) return;
-                                // disable displaying the color box;
-                                tooltip.displayColors = false;
-                            }
-                        },
-                        "elements": {
-                            "line": {
-                                "tension": 0.5
-                            },
-                            "point":{
-                                "radius": 0
-                            }
-                        },
-                        "scales": {
-                            "xAxes": [{
-                                "gridLines": {
-                                    "display": false,
-                                },
-                                "ticks": {
-                                    "autoskip": true,
-                                    "autoSkipPadding": 30,
-                                }
-                            }],
-                            "yAxes": [{
-                                "id": 'left-y-axis',
-                                "gridLines": {
-                                    "drawBorder": false
-                                },
-                                type: 'linear',
-                                "ticks": {
-                                    "maxTicksLimit": 5,
-                                    "padding": 15,
-                                    "callback": function(value) {
-                                        var ranges = [
-                                            { divider: 1e6, suffix: 'M' },
-                                            { divider: 1e3, suffix: 'k' }
-                                        ];
-                                        function formatNumber(n) {
-                                            for (var i = 0; i < ranges.length; i++) {
-                                            if (n >= ranges[i].divider) {
-                                                return (n / ranges[i].divider).toString() + ranges[i].suffix;
-                                            }
-                                            }
-                                            return n;
-                                        }
-                                        return formatNumber(value);
-                                    }
-                                },
-                                "position": 'left'
-                            }]
-                        }
-                    },
-                }
-            );
-
-            // Header Hospital chart
-            new Chart(
-                document.getElementById("headerHospitalChart"),{
-                    "type":"LineWithLine",
-                    "data":{
-                        "labels": [<?php foreach($icBedsUsage as $isValue){ echo "\"".date("M j Y",intval($isValue["date_of_report_unix"]))."\",";} ?>],
-                        "datasets":[{
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#eb4034",
-                            "pointBackgroundColor": "#eb4034",
-                            "label":"IC beds",
-                            "data": [<?php foreach($icBedsUsage as $isValue){ echo $isValue["covid_occupied"].",";} ?>]
-                        },{
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#eba834",
-                            "pointBackgroundColor": "#eba834",
-                            "label":"Hospital beds",
-                            "data": [<?php foreach($hospBedsUsage as $isValue){ echo $isValue["covid_occupied"].",";} ?>]
-                        },
-                        {
-                            pointHitRadius: 20,
-                            "fill": false,
-                            "borderColor": "#bababa",
-                            "pointBackgroundColor": "#eba834",
-                            "label":"IC Limit",
-                            "data": [<?php foreach($hospBedsUsage as $isValue){ echo "1600,";} ?>]
-                        }]
-                    },
-                    "options":{
-                        "responsive": false,
-                        "legend": {
-                            "display": false
-                        },
-                        "tooltips": {
-                            "intersect": false,
-                            "custom": function(tooltip) {
-                                if (!tooltip) return;
-                                // disable displaying the color box;
-                                tooltip.displayColors = false;
-                            }
-                        },
-                        "elements": {
-                            "line": {
-                                "tension": 0.5
-                            },
-                            "point":{
-                                "radius": 0
-                            }
-                        },
-                        "scales": {
-                            "xAxes": [{
-                                "gridLines": {
-                                    "display": false,
-                                },
-                                "ticks": {
-                                    "autoskip": true,
-                                    "autoSkipPadding": 30,
-                                }
-                            }],
-                            "yAxes": [{
-                                "gridLines": {
-                                    "drawBorder": false
-                                },
-                                "type": 'linear',
-                                "ticks": {
-                                    "maxTicksLimit": 5,
-                                    "padding": 15,
-                                    "callback": function(value) {
-                                        var ranges = [
-                                            { divider: 1e6, suffix: 'M' },
-                                            { divider: 1e3, suffix: 'k' }
-                                        ];
-                                        function formatNumber(n) {
-                                            for (var i = 0; i < ranges.length; i++) {
-                                            if (n >= ranges[i].divider) {
-                                                return (n / ranges[i].divider).toString() + ranges[i].suffix;
-                                            }
-                                            }
-                                            return n;
-                                        }
-                                        return formatNumber(value);
-                                    }
-                                },
-                                "stacked": true,
-                            }]
-                        }
-                    },
-                }
-            );
+            headerHospitalChart.data.labels = [<?php foreach($icBedsUsage as $isValue){ echo "\"".date("M j Y",intval($isValue["date_of_report_unix"]))."\",";} ?>];
+            headerHospitalChart.data.datasets[0].data = [<?php foreach($icBedsUsage as $isValue){ echo $isValue["covid_occupied"].",";} ?>];
+            headerHospitalChart.data.datasets[1].data = [<?php foreach($hospBedsUsage as $isValue){ echo $isValue["covid_occupied"].",";} ?>];
+            headerHospitalChart.data.datasets[2].data = [<?php foreach($hospBedsUsage as $isValue){ echo "1600,";} ?>];
+            headerHospitalChart.update();
 
             // Heatmap
             am4core.ready(function() {
