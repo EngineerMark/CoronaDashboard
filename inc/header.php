@@ -98,7 +98,7 @@
                     <div class="card chart-card">
                         <div class="card-body">
                             <h5 class="body-title">Total Cases</h5>
-                            <h6><?php echo number_format($totalCases)." <small>".AdditionNumberString($newCases,true,true)."</small>"; ?></h6>
+                            <h6><?php echo number_format($totalCases)." <small data-toggle=\"tooltip\" title=\"Registered in last 24 hours\">".AdditionNumberString($newCases,true,true)."</small>"; ?></h6>
                             <canvas id="headerTotalCasesChart"></canvas>
                         </div>
                     </div>
@@ -107,7 +107,7 @@
                     <div class="card chart-card">
                         <div class="card-body">
                             <h5 class="body-title">Total Deaths</h5>
-                            <h6><?php echo number_format($totalDeaths)." <small>".AdditionNumberString($newDeaths,true,true)."</small>"; ?></h6>
+                            <h6><?php echo number_format($totalDeaths)." <small data-toggle=\"tooltip\" title=\"Registered in last 24 hours\">".AdditionNumberString($newDeaths,true,true)."</small>"; ?></h6>
                             <canvas id="headerTotalDeathsChart"></canvas>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                     <div class="card chart-card">
                         <div class="card-body">
                             <h5 class="body-title">Hospitalizations</h5>
-                            <h6><?php echo number_format($hospBedsUsageReverse[0]["covid_occupied"]+$icBedsUsageReverse[0]["covid_occupied"])." <small>".AdditionNumberString($hospBedsDifference+$icBedsDifference,true,true)."</small>"; ?></h6>
+                            <h6><?php echo number_format($hospBedsUsageReverse[0]["covid_occupied"]+$icBedsUsageReverse[0]["covid_occupied"])." <small data-toggle=\"tooltip\" title=\"Registered in last 24 hours\">".AdditionNumberString($hospBedsDifference+$icBedsDifference,true,true)."</small>"; ?></h6>
                             <canvas id="headerHospitalChart"></canvas>
                         </div>
                     </div>

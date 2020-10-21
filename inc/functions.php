@@ -28,7 +28,9 @@ $regions = [
 
 function ColorHeat($rgbHot, $rgbCold, $low, $high, $value){
     $t = ($value-$low)/($high-$low);
-    $t = sin($t*pi()*0.5);
+    // echo $t."<br />";
+    // $t = min(1,max(0,(log10($t)+1)*0.5));
+    // $t = sin($t*pi()*0.5);
     $r = Lerp($rgbHot[0], $rgbCold[0], $t);
     $g = Lerp($rgbHot[1], $rgbCold[1], $t);
     $b = Lerp($rgbHot[2], $rgbCold[2], $t);
@@ -49,7 +51,7 @@ function AdditionNumberString($val, $positiveIsBad = true, $formatNumber = false
     }elseif($val>0){
         $front = "<span class=\"text-danger\"><i class=\"fas fa-caret-up\"></i>";
     }else{
-        $front = "<span>";
+        $front = "<span class=\"text-black-50\"><i class=\"fas fa-sort\"></i>";
     }
     $back = "</span>";
     $val = abs($val);

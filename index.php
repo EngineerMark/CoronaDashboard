@@ -120,9 +120,9 @@
                                     $heatmapHospital = ColorHeat($heatMap["hospital"]["cold"],$heatMap["hospital"]["hot"], 0, $heatMap["hospital"]["high"], intval($province->TotalHospitalAdmissions));
                                     echo "<tr data-toggle=\"modal\" data-target=\"#listedStatsProvince_".$provinceID."\">";
                                     echo "<td>".$province->RegionName."</td>";
-                                    echo "<td style=\"border-left: 5px solid rgb(".$heatmapCases[0].",".$heatmapCases[1].",".$heatmapCases[2].")\" value=\"".$province->TotalCases."\">".$province->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
-                                    echo "<td style=\"border-left: 5px solid rgb(".$heatmapDeaths[0].",".$heatmapDeaths[1].",".$heatmapDeaths[2].")\">".$province->TotalDeaths." <small>".($dailyEvents[0]->ReportedDeaths!=0?AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true):"")."</small></td>";
-                                    echo "<td style=\"border-left: 5px solid rgb(".$heatmapHospital[0].",".$heatmapHospital[1].",".$heatmapHospital[2].")\">".$province->TotalHospitalAdmissions." <small>".($dailyEvents[0]->ReportedHospitalAdmissions!=0?AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true):"")."</small></td>";
+                                    echo "<td style=\"border-left: 5px solid rgb(".$heatmapCases[0].",".$heatmapCases[1].",".$heatmapCases[2].")\" value=\"".$province->TotalCases."\">".number_format($province->TotalCases)." <small>".AdditionNumberString($dailyEvents[0]->ReportedCases,true,true)."</small></td>";
+                                    echo "<td style=\"border-left: 5px solid rgb(".$heatmapDeaths[0].",".$heatmapDeaths[1].",".$heatmapDeaths[2].")\">".number_format($province->TotalDeaths)." <small>".AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true)."</small></td>";
+                                    echo "<td style=\"border-left: 5px solid rgb(".$heatmapHospital[0].",".$heatmapHospital[1].",".$heatmapHospital[2].")\">".number_format($province->TotalHospitalAdmissions)." <small>".AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true)."</small></td>";
                                     echo "</tr>";
                                     $provinceID++;
                                 }
@@ -154,6 +154,7 @@
         $heatMap["cases"]["high"] = 0;
         $heatMap["deaths"]["high"] = 0;
         $heatMap["hospital"]["high"] = 0;
+        $dailyEvents = array_values($province->DailyEvents);
         echo "<div class=\"modal fade\" id=\"listedStatsProvince_".$provinceID."\" role=\"dialog\" aria-labelledby=\"listedStatsProvince_".$provinceID."-tab\">
                 <div class=\"modal-dialog modal-lg\" role=\"document\">
                     <div class=\"modal-content\">
@@ -188,9 +189,9 @@
                                 <thead class=\"bg-light\">
                                     <tr>
                                         <th scope=\"col\">Municipality (".count($Municipalities).")</th>
-                                        <th scope=\"col\">Cases</th>
-                                        <th scope=\"col\">Deaths</th>
-                                        <th scope=\"col\">Hosp. Admissions</th>
+                                        <th scope=\"col\">Cases ".AdditionNumberString($dailyEvents[0]->ReportedCases,true,true)."</th>
+                                        <th scope=\"col\">Deaths ".AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true)."</th>
+                                        <th scope=\"col\">Hosp. Admissions ".AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true)."</th>
                                     </tr>
                                 </thead>
                                 <tbody>";
@@ -221,9 +222,9 @@
                                             }
                                             echo "<tr>";
                                             echo "<td class=\"d-flex justify-content-between align-items-center\">".$municipality->RegionName." <small>".$icons."</small></td>";
-                                            echo "<td style=\"border-left: 5px solid rgb(".$heatmapCases[0].",".$heatmapCases[1].",".$heatmapCases[2].")\">".$municipality->TotalCases." <small>".($dailyEvents[0]->ReportedCases!=0?AdditionNumberString($dailyEvents[0]->ReportedCases,true,true):"")."</small></td>";
-                                            echo "<td style=\"border-left: 5px solid rgb(".$heatmapDeaths[0].",".$heatmapDeaths[1].",".$heatmapDeaths[2].")\">".$municipality->TotalDeaths." <small>".($dailyEvents[0]->ReportedDeaths!=0?AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true):"")."</small></td>";
-                                            echo "<td style=\"border-left: 5px solid rgb(".$heatmapHospital[0].",".$heatmapHospital[1].",".$heatmapHospital[2].")\">".$municipality->TotalHospitalAdmissions." <small>".($dailyEvents[0]->ReportedHospitalAdmissions!=0?AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true):"")."</small></td>";
+                                            echo "<td style=\"border-left: 5px solid rgb(".$heatmapCases[0].",".$heatmapCases[1].",".$heatmapCases[2].")\">".number_format($municipality->TotalCases)." <small>".AdditionNumberString($dailyEvents[0]->ReportedCases,true,true)."</small></td>";
+                                            echo "<td style=\"border-left: 5px solid rgb(".$heatmapDeaths[0].",".$heatmapDeaths[1].",".$heatmapDeaths[2].")\">".number_format($municipality->TotalDeaths)." <small>".AdditionNumberString($dailyEvents[0]->ReportedDeaths,true,true)."</small></td>";
+                                            echo "<td style=\"border-left: 5px solid rgb(".$heatmapHospital[0].",".$heatmapHospital[1].",".$heatmapHospital[2].")\">".number_format($municipality->TotalHospitalAdmissions)." <small>".AdditionNumberString($dailyEvents[0]->ReportedHospitalAdmissions,true,true)."</small></td>";
                                             echo "</tr>";
                                         }
                                 echo "</tbody>
