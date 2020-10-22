@@ -262,43 +262,8 @@
             headerHospitalChart.data.datasets[1].data = [<?php foreach($hospBedsUsage as $isValue){ echo $isValue["covid_occupied"].",";} ?>];
             headerHospitalChart.data.datasets[2].data = [<?php foreach($hospBedsUsage as $isValue){ echo "1600,";} ?>];
             headerHospitalChart.update();
-
-            // Heatmap
-            am4core.ready(function() {
-
-            // Themes begin
-            am4core.useTheme(am4themes_animated);
-            // Themes end
-
-            // Create map instance
-            var chart = am4core.create("netherlandsheatmap", am4maps.MapChart);
-
-            // Set map definition
-            chart.geodata = am4geodata_netherlandsHigh;
-
-            // Set projection
-            chart.projection = new am4maps.projections.Mercator();
-
-            // Create map polygon series
-            var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
-
-            //Set min/max fill color for each area
-            polygonSeries.heatRules.push({
-            property: "fill",
-            target: polygonSeries.mapPolygons.template,
-                min: chart.colors.getIndex(9).brighten(1),
-                max: chart.colors.getIndex(9).brighten(-0.3)
-            });
-
-            // Make map load polygon data (state shapes and names) from GeoJSON
-            polygonSeries.useGeodata = true;
-
-            // Set heatmap values for each state
-            polygonSeries.data = [
-                // {
-                //     id: "US-AL",
-                //     value: 4447100
-                // }
+            
+            var mapDataPerCapita = [
                 <?php
                     foreach($provinceData as $province)
                     echo "{
@@ -308,18 +273,79 @@
                 ?>
             ];
 
-            
-            // Configure series tooltip
-            var polygonTemplate = polygonSeries.mapPolygons.template;
-            polygonTemplate.tooltipText = "{name}: {value}";
-            polygonTemplate.nonScalingStroke = true;
-            polygonTemplate.strokeWidth = 0.5;
+            var mapDataTotal = [
+                <?php
+                    foreach($provinceData as $province)
+                    echo "{
+                        \"id\":\"".$provinceTable[$province->RegionName][0]."\",
+                        \"value\":".round($province->TotalCases)."
+                    },";
+                ?>
+            ];
 
-            // Create hover state and set alternative fill color
-            var hs = polygonTemplate.states.create("hover");
-            hs.properties.fill = chart.colors.getIndex(9).brighten(-0.3);
-            
+            var mapchart = null;
+            var polygonSeries = null;
+            // Heatmap
+            am4core.ready(function() {
+                // Themes begin
+                am4core.useTheme(am4themes_animated);
+                // Themes end
+
+                // Create map instance
+                mapchart = am4core.create("netherlandsheatmap", am4maps.MapChart);
+
+                mapchart.seriesContainer.draggable = false;
+                mapchart.seriesContainer.resizable = false;
+                mapchart.maxZoomLevel = 1;
+
+                // Set map definition
+                mapchart.geodata = am4geodata_netherlandsHigh;
+
+                // Set projection
+                mapchart.projection = new am4maps.projections.Mercator();
+
+                // Create map polygon series
+                polygonSeries = mapchart.series.push(new am4maps.MapPolygonSeries());
+
+
+                //Set min/max fill color for each area
+                polygonSeries.heatRules.push({
+                    property: "fill",
+                    target: polygonSeries.mapPolygons.template,
+                        min: mapchart.colors.getIndex(9).brighten(1),
+                        max: mapchart.colors.getIndex(9).brighten(-0.3)
+                    });
+
+                    // Make map load polygon data (state shapes and names) from GeoJSON
+                    polygonSeries.useGeodata = true;
+
+                    // Set heatmap values for each state
+                    polygonSeries.data = mapDataTotal;
+
+                    
+                    // Configure series tooltip
+                    var polygonTemplate = polygonSeries.mapPolygons.template;
+                    polygonTemplate.tooltipText = "{name}: {value}";
+                    polygonTemplate.nonScalingStroke = true;
+                    polygonTemplate.strokeWidth = 0.5;
+
+                    // Create hover state and set alternative fill color
+                    var hs = polygonTemplate.states.create("hover");
+                    hs.properties.fill = mapchart.colors.getIndex(9).brighten(-0.3);
             }); // end am4core.ready()
+
+            function MapChartTotal(){
+                polygonSeries.data = mapDataTotal;
+                mapchart.validateData();
+            }
+
+            function MapChartPerCapita(){
+                polygonSeries.data = mapDataPerCapita;
+                mapchart.validateData();
+            }
+
+            $('#mapChartTotal').click(function(){MapChartTotal()});
+            $('#mapChartPerCapita').click(function(){MapChartPerCapita()});
         </script>
         <!-- Disqus Code -->
         <script>

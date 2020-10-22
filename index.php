@@ -137,6 +137,10 @@
                 <i class="far fa-clock"></i> Last update: <?php echo time_elapsed_string("@".strtotime($regDate." 10:00:00")); ?>
             </div>
             <div class="card-body">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button id="mapChartTotal" type="button" class="btn btn-sm btn-primary btn-rounded">Total cases</button>
+                    <button id="mapChartPerCapita" type="button" class="btn btn-sm btn-primary btn-rounded">Per capita</button>
+                </div>
                 <div class="netherlandsheatmap" id="netherlandsheatmap"></div>
                 <small>Cases per 100.000 inhabitants</small>
             </div>
